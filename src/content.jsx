@@ -26,7 +26,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
     
     <Container fluid className="bg-light" style={{ height: '100%' }}>
       {/* First Row */}
-      <Row style={{ height: '48%' }}>
+      <Row style={{ height: '45%' }}>
         {/* Persona Graph */}
         <Col md={10} style={{ marginLeft: '0%' }}>
 
@@ -108,8 +108,8 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
       </Row>
 
       {/* Second Row */}
-      <Row style={{ height: '48%' }}>
-        <Col md={6}>
+      <Row style={{ height: '45%' }}>
+        <Col md={5}>
         {
           visualType === "one-topic" ? (
             <PlotPieA
@@ -149,7 +149,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
 
          
         </Col>
-        <Col md={6}>
+        <Col md={5} style={{ marginLeft: '5%' }} >
         {
           visualType === "one-topic" ? (
           <PlotBarChartA
