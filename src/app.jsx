@@ -16,7 +16,7 @@ const App = () => {
     "株式会社竹中工務店", "株式会社長谷工コーポレーション", "前田建設工業株式会社", 
     "五洋建設株式会社", "株式会社フジタ", "戸田建設株式会社", "株式会社熊谷組"
   ];
-  const topicList = ["0","1","2","3","5","6","7","8","9","10","11"]
+  const topicList = ["0","1","2","3","5","6","7","8","9","11"]
 
   const [visualType, setVisualType] = useState("one-topic"); // 初期値を設定
 
@@ -94,7 +94,7 @@ const App = () => {
     <Container fluid className="bg-light">
       <Row>
         {/* サイドバー */}
-        <Col md={2} className="border-end">
+        <Col md={3} className="border-end">
           <Sidebar 
           onApply={handleApply}
           visualType={visualType}
@@ -109,7 +109,7 @@ const App = () => {
         </Col>
         
         {/* ナビゲーションバーとメインコンテンツ */}
-        <Col md={10} className="border-end">
+        <Col md={9} className="border-end" style={{ height: '100vh' }}>
           
           <Content 
           plot={isApplied} 

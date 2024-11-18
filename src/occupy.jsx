@@ -73,7 +73,7 @@ const PlotPieA = ({ update, visualType, topic, onRendered }) => {
   }, [update, visualType, topic, onRendered]);
 
   return (
-    <div>
+    <div style={{marginTop:"3vh", width: "100vh", height: "97vh" }}>
       <Plot
         data={[
           {
@@ -93,6 +93,8 @@ const PlotPieA = ({ update, visualType, topic, onRendered }) => {
           paper_bgcolor: "white",
           margin: { t: 70, b: 5, l: 40, r: 50 },
         }}
+        config={{ responsive: true }} // Plotlyにレスポンシブ設定を有効化
+        style={{marginTop:"3vh", width: "100vh", height: "100vh" }} // 必ず全体サイズを親要素に合わせ
       />
     </div>
   );

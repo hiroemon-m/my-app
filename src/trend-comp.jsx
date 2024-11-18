@@ -93,7 +93,7 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
   }, [visualType, topic, company, JSON.stringify(clickdata), update]);
 
   return (
-    <div>
+    <div  style={{marginTop:"3vh", width: "100vh", height: "97vh" }} > 
       <Plot
         data={[
           {
@@ -126,6 +126,8 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
           paper_bgcolor: "white",
           margin: { t: 40, b: 35, l: 80, r: 50 },
         }}
+        config={{ responsive: true }} // Plotlyにレスポンシブ設定を有効化
+          style={{marginTop:"3vh", width: "100vh", height: "100vh" }} // 必ず全体サイズを親要素に合わせ
       />
     </div>
   );

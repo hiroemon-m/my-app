@@ -70,7 +70,7 @@ const PlotBarChartA = ({ update, visualType, topic, onRendered }) => {
   }, [visualType, topic, update]); // clickdata を依存関係に追加
 
   return (
-    <div>
+    <div style={{marginTop:"3vh", width: "100vh", height: "97vh" }} >
       <Plot
         data={[
           {
@@ -103,6 +103,8 @@ const PlotBarChartA = ({ update, visualType, topic, onRendered }) => {
           paper_bgcolor: "white",
           margin: { t: 40, b: 35, l: 80, r: 50 },
         }}
+        config={{ responsive: true }} // Plotlyにレスポンシブ設定を有効化
+        style={{marginTop:"3vh", width: "100vh", height: "100vh" }} // 必ず全体サイズを親要素に合わせ
       />
     </div>
   );

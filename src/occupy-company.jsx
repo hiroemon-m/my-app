@@ -140,7 +140,7 @@ const PlotPieB = ({ update, visualType, topic, company, onRendered, onClickData 
   };
 
   return (
-    <div>
+    <div style={{marginTop:"3vh", width: "100vh", height: "97vh" }}>
       <Plot
         data={[
           {
@@ -160,6 +160,8 @@ const PlotPieB = ({ update, visualType, topic, company, onRendered, onClickData 
         }}
         onClick={handlePlotClick} // クリックイベントを追加
       />
+      config={{ responsive: true }} // Plotlyにレスポンシブ設定を有効化
+      style={{marginTop:"3vh", width: "100vh", height: "100vh" }} // 必ず全体サイズを親要素に合わせ
     </div>
   );
 };

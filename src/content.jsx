@@ -1,11 +1,10 @@
 import React, { useState,useEffect }from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import Plot from 'react-plotly.js';
 import PlotPieA from './occupy.jsx';
 import PlotPieB from './occupy-company.jsx';
 import PlotPersonaComp from './persona-comp.jsx';
 import PlotPersonaTopic from './persona-topic.jsx';
-import { update } from 'plotly.js';
+
 import PlotBarChartA from './trend-topix.jsx';
 import PlotBarChartB from './trend-comp.jsx';
 
@@ -13,7 +12,7 @@ import PlotBarChartB from './trend-comp.jsx';
 
 const Content = ({plot,visualType,topic,company,resetApply}) => {
 
-    const [data, setData] = useState(null);
+
     const [clickData, setClickData] = useState(); // クリックデータの状態
 
     const handlePieChartClick = (data) => {
@@ -24,12 +23,11 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
     
   return (
     
-    <Container fluid className="bg-light" style={{ height: '100%' }}>
+    <Container fluid className="bg-light" style={{ width:'100vh',height: '100vh' }}>
       {/* First Row */}
-      <Row style={{ height: '45%' }}>
+      <Row style={{ width:'100vh',height: '50vh' }}>
         {/* Persona Graph */}
-        <Col md={10} style={{ marginLeft: '0%' }}>
-
+        <Col md={9} style={{width:'100vh',height: '100vh' }}>
         {
           visualType === "one-topic" ? (
             <PlotPersonaTopic
@@ -43,6 +41,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
                 width: '100%',
                 height: '42vh',
               }}
+             
               className="bg-light"
             />
           ) : visualType === "one-comp" ? (
@@ -57,6 +56,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
                 width: '100%',
                 height: '42vh',
               }}
+            
               className="bg-light"
             />
           ) : (
@@ -67,49 +67,33 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
         </Col>
 
         {/* Right Column with Cards */}
-        <Col md={2} style={{ height: '100%' }}>
-          <p
-            style={{
-              fontSize: 18,
-              color: 'gray',
-              textAlign: 'center',
-            }}
-            className="text-secondary-emphasis"
-          >
-
-          </p>
-          <Row style={{ height: '80%' }}>
-            <Col style={{ height: '29%', marginTop: '4%' }}>
-              <Card className="white">
-                <Card.Body>
-                  <Card.Title className="text-secondary-emphasis">1</Card.Title>
-                  <Card.Text className="text-secondary-emphasis">ABC</Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col style={{ height: '29%', marginTop: '4%' }}>
-              <Card className="white">
-                <Card.Body>
-                  <Card.Title className="text-secondary-emphasis">2</Card.Title>
-                  <Card.Text className="text-secondary-emphasis">DEF</Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col style={{ height: '29%', marginTop: '4%' }}>
-              <Card className="white">
-                <Card.Body>
-                  <Card.Title className="text-secondary-emphasis">3</Card.Title>
-                  <Card.Text className="text-secondary-emphasis">GHI</Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
+        <Col md={3} style={{ height: '40%' }}>
+          <Row className="h-100">
+            {["ABC", "DEF", "GHI"].map((text, index) => (
+              <Col
+                key={index}
+                xs={12} // 横幅全体を使う
+                className="d-flex align-items-center justify-content-center"
+                style={{ flex: "1 1 auto" }} // 高さを均等に分割
+              >
+                <Card className="w-75 h-75"> {/* カードを親要素に収める */}
+                  <Card.Body className="d-flex flex-column align-items-center justify-content-center">
+                    <Card.Title className="text-secondary-emphasis">{index + 1}</Card.Title>
+                    <Card.Text className="text-secondary-emphasis">{text}</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
           </Row>
-        </Col>
+</Col>
+
+
+  
       </Row>
 
       {/* Second Row */}
-      <Row style={{ height: '45%' }}>
-        <Col md={5}>
+      <Row style={{ height: '40vh' }}>
+        <Col md={6}>
         {
           visualType === "one-topic" ? (
             <PlotPieA
@@ -123,6 +107,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
                 width: '100%',
                 height: '80%',
               }}
+              
               className="bg-light"
             />
           ) : visualType === "one-comp" ? (
@@ -149,7 +134,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
 
          
         </Col>
-        <Col md={5} style={{ marginLeft: '5%' }} >
+        <Col md={6}>
         {
           visualType === "one-topic" ? (
           <PlotBarChartA
@@ -172,6 +157,8 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
               topic={topic}
               company={company}
               clickdata={clickData} // クリックデータを渡す
+    
+
               onRendered={resetApply}
             data={[]} // データを追加してください
             layout={{
