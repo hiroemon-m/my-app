@@ -172,8 +172,6 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
               topic={topic}
               company={company}
               clickdata={clickData} // クリックデータを渡す
-    
-
               onRendered={resetApply}
             data={[]} // データを追加してください
             layout={{
