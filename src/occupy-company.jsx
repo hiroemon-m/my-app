@@ -38,13 +38,14 @@ const PlotPieB = ({ update, visualType, topic, company, onRendered, onClickData 
   const [chartData, setChartData] = useState([]);
   const [title, setTitle] = useState("注目トピックに関する特許の企業占有率");
   const allTopic = [2, 3, 1, 0, 9, 6, 8, 7, 11];
+
   const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トンネル掘削",
     "0":"免震構造","9":"管理システム","6":"廃棄物処理","8":"建築パネル",
-    "7":"空調システム","11":"掘削装置"};
+    "7":"空調システム","11":"掘削装置","10":"建築設計","5":"トンネル測量"};
 
     const TopictoId = {"コンクリート構造":"2","地盤改良":"3","トンネル掘削":"1",
         "免震構造":"0","管理システム":"9","廃棄物処理":"6","建築パネル":"8",
-       "空調システム":"7","掘削装置":"11"};
+       "空調システム":"7","掘削装置":"11","建築設計":"10","トンネル測量":"5"};
   // キャッシュ用のオブジェクト
   const dataCache = useRef({
     companies: {},

@@ -36,6 +36,9 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
   const [companyList, setCompanyList] = useState([]);
   const [searchList, setSearchList] = useState([]);
   const [title, setTitle] = useState("");
+  const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トンネル掘削",
+    "0":"免震構造","9":"管理システム","6":"廃棄物処理","8":"建築パネル",
+    "7":"空調システム","11":"掘削装置","10":"建築設計","5":"トンネル測量"};
 
   // 初期データのロード
   useEffect(() => {
@@ -45,7 +48,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
 
       loadCompanies(columnPath).then((data) => {
         setCompanyList(data);
-        setTitle(`${target_id}のペルソナ`);
+        setTitle(`業界内での企業の立ち位置`);
       });
     }
   }, [visualType, topic]);

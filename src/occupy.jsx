@@ -29,6 +29,9 @@ const fetchTextData = async (url) => {
 const PlotPieA = ({ update, visualType, topic, onRendered }) => {
   const [chartData, setChartData] = useState([]);
   const [title, setTitle] = useState("");
+  const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トンネル掘削",
+    "0":"免震構造","9":"管理システム","6":"廃棄物処理","8":"建築パネル",
+    "7":"空調システム","11":"掘削装置","10":"建築設計","5":"トンネル測量"};
 
   useEffect(() => {
     const loadChartData = async () => {
@@ -56,7 +59,7 @@ const PlotPieA = ({ update, visualType, topic, onRendered }) => {
           .slice(0, 10);
 
         setChartData(sortedData);
-        setTitle(`${targetId}に関する特許の企業占有率`);
+        setTitle(`${IdtoTopic[targetId]}に関する特許の企業占有率`);
         if (onRendered) onRendered(); // 描画完了を通知
       } catch (error) {
         console.error("チャートデータの処理中にエラー:", error);
