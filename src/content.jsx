@@ -23,11 +23,11 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
     
   return (
     
-    <Container fluid className="bg-light" style={{ width:'100vh',height: '100vh' }}>
+    <Container fluid className="bg-light" style={{ height: '100vh' }}>
       {/* First Row */}
-      <Row style={{ width:'100vh',height: '50vh' }}>
+      <Row style={{height: '50%' }}>
         {/* Persona Graph */}
-        <Col md={9} style={{width:'100vh',height: '100vh' }}>
+        <Col md={9} style={{height: '100%', marginLeft:"0%"}}>
         {
           visualType === "one-topic" ? (
             <PlotPersonaTopic
@@ -67,7 +67,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
         </Col>
 
         {/* Right Column with Cards */}
-        <Col md={3} style={{ height: '40%' }}>
+        <Col md={3} style={{ height: '45%' }}>
           <Row className="h-100">
             {["ABC", "DEF", "GHI"].map((text, index) => (
               <Col
@@ -92,7 +92,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
       </Row>
 
       {/* Second Row */}
-      <Row style={{ height: '40vh' }}>
+      <Row style={{ height: '50%' }}>
         <Col md={6}>
         {
           visualType === "one-topic" ? (

@@ -45,7 +45,7 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
       </Row>
 
       {/* Accordion */}
-      <Row className="bg-light text-danger font-italic" style={{ height: '80%' }}>
+      <Row className="bg-light text-danger " style={{ height: '80%' }}>
         <Accordion defaultActiveKey="0" className="my-3">
           {/* Visualization Type */}
           <Accordion.Item eventKey="0" className="white">
@@ -62,7 +62,11 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
                     onChange={handleRadioChange}
                     checked={visualType === "one-comp"} // デフォルトチェック
                   />
-                  <label htmlFor="one-comp" className="form-check-label mx-2">一社に注目</label>
+                  <label 
+                  htmlFor="one-comp"
+                  className="form-check-label mx-2"
+                  style={{ fontSize: "14px" }}
+                  >1社に注目</label>
                 </div>
                 <div className="col-6 d-flex align-items-center">
                   <input
@@ -74,7 +78,11 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
                     onChange={handleRadioChange}
                     checked={visualType === "one-topic"} // デフォルトチェック
                   />
-                  <label htmlFor="one-topic" className="form-check-label mx-2">一つのトピックに注目</label>
+                  <label 
+                  htmlFor="one-topic"
+                  className="form-check-label mx-2"
+                  style={{ fontSize: "14px" }}
+                  >1トピックに注目</label>
                 </div>
               </div>
             </Accordion.Body>
