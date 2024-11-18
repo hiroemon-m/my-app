@@ -24,7 +24,7 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
   
 
   return (
-    <div style={{ height: '100vh', padding: '10px', backgroundColor: 'lightgray' }}>
+    <div style={{ height: '100vh', padding: '10px', backgroundColor: 'bg-light' }}>
       {/* Header */}
       <Row className="bg-light text-danger font-italic" style={{ height: '5%' }}>
         <Col sm={6}>
