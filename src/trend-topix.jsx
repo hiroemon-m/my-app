@@ -30,7 +30,7 @@ const PlotBarChartA = ({ update, visualType, topic, onRendered }) => {
       try {
         const time = 9;
         const targetId = topic[0]; // clickdataを優先
-        const path = `/data/param/patent/alpha/topic=${targetId}/trend/output_topic_${time}.json`;
+        const path = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${targetId}/trend/output_topic_${time}.json`;
 
 
         // データを取得
