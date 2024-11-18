@@ -158,10 +158,10 @@ const PlotPieB = ({ update, visualType, topic, company, onRendered, onClickData 
           paper_bgcolor: "white",
           margin: { t: 70, b: 5, l: 40, r: 50 },
         }}
+        style={{ width: "100%", height: "100%" }} // 必ず全体サイズを親要素に合わせ
         onClick={handlePlotClick} // クリックイベントを追加
       />
-   
-      style={{ width: "100%", height: "100%" }} // 必ず全体サイズを親要素に合わせ
+     
     </div>
   );
 };
