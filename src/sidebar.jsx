@@ -18,15 +18,15 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
 
   const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トンネル掘削",
     "0":"免震構造","9":"管理システム","6":"廃棄物処理","8":"建築パネル",
-    "7":"空調システム","11":"掘削装置"};
+    "7":"空調システム","11":"掘削装置","5":"トンネル測量","10":"建築設計"};
   
 
   
 
   return (
-    <div style={{ height: '100vh', padding: '10px', backgroundColor: 'lightgray' }}>
+    <div style={{ height: '100vh', padding: '10px', backgroundColor: 'bg-gray' }}>
       {/* Header */}
-      <Row className="bg-light text-danger font-italic" style={{ height: '5%' }}>
+      <Row className="bg-light text-danger " style={{ height: '5%' }}>
         <Col sm={6}>
           <h5 style={{ marginTop: '10%' }} className="text-secondary-emphasis">
             可視化条件
@@ -45,7 +45,7 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
       </Row>
 
       {/* Accordion */}
-      <Row className="bg-light text-danger font-italic" style={{ height: '80%' }}>
+      <Row className="bg-light text-danger " style={{ height: '80%' }}>
         <Accordion defaultActiveKey="0" className="my-3">
           {/* Visualization Type */}
           <Accordion.Item eventKey="0" className="white">
@@ -62,7 +62,11 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
                     onChange={handleRadioChange}
                     checked={visualType === "one-comp"} // デフォルトチェック
                   />
-                  <label htmlFor="one-comp" className="form-check-label mx-2">一社に注目</label>
+                  <label 
+                  htmlFor="one-comp" 
+                  className="form-check-label mx-2"
+                  style={{ fontSize: "14px" }}
+                  >1社に注目</label>
                 </div>
                 <div className="col-6 d-flex align-items-center">
                   <input
@@ -74,7 +78,11 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
                     onChange={handleRadioChange}
                     checked={visualType === "one-topic"} // デフォルトチェック
                   />
-                  <label htmlFor="one-topic" className="form-check-label mx-2">一つのトピックに注目</label>
+                  <label 
+                  htmlFor="one-topic"
+                   className="form-check-label mx-2"
+                   style={{ fontSize: "14px" }}
+                   >1トピックに注目</label>
                 </div>
               </div>
             </Accordion.Body>

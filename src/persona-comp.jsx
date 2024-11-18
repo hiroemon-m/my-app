@@ -134,7 +134,7 @@ const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トン
   }, [update, preparedData]);
 
   return (
-    <div>
+    <div style={{ width:'100vh' ,height: '100vh' }}>
       <Plot
         data={figData}
         layout={{
@@ -175,6 +175,8 @@ const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トン
             borderwidth: 1,
           },
         }}
+        config={{ responsive: true }} // Plotlyにレスポンシブ設定を有効化
+        style={{marginTop:"2vh", width: "100vh", height: "45vh" }} // 必ず全体サイズを親要素に合わせる
       />
     </div>
   );

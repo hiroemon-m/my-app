@@ -122,7 +122,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
   }, [update, searchList, companyList, topic]);
 
   return (
-    <div>
+    <div  style={{ width:'100vh' ,height: '100vh' }}>
       <Plot
         data={figData}
         layout={{
@@ -163,6 +163,8 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
             borderwidth: 1,
           },
         }}
+        config={{ responsive: true }} // Plotlyにレスポンシブ設定を有効化
+              style={{marginTop:"2vh", width: "100vh", height: "45vh" }} // 必ず全体サイズを親要素に合わせる
       />
     </div>
   );

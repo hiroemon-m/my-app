@@ -94,7 +94,7 @@ const App = () => {
     <Container fluid className="bg-light">
       <Row>
         {/* サイドバー */}
-        <Col md={2} className="border-end">
+        <Col md={3} className="border-end">
           <Sidebar 
           onApply={handleApply}
           visualType={visualType}
@@ -109,7 +109,7 @@ const App = () => {
         </Col>
         
         {/* ナビゲーションバーとメインコンテンツ */}
-        <Col md={10} className="border-end">
+        <Col md={9} className="border-end" style={{ height: '100vh' }}>
           
           <Content 
           plot={isApplied} 
