@@ -19,56 +19,36 @@ const fetchData = async (url) => {
   }
 };
 
-// データをロードする関数
-const loadCompanies = async (dataPath) => {
-  try {
-    const response = await fetch(dataPath);
-    const text = await response.text();
-    return text.split("\n").filter((line) => line.trim() !== "");
-  } catch (error) {
-    console.error("データの読み込みエラー:", error);
-    return [];
-  }
-};
 
-const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRendered }) => {
+
+const PlotBarChartA = ({ update, visualType, topic, onRendered }) => {
   const [chartData, setChartData] = useState([]);
-  const [title, setTitle] = useState("FIの分布");
+  const [title, setTitle] = useState("FIの分布!");
 
   useEffect(() => {
     const loadChartData = async () => {
       try {
         const time = 9;
-        const targetId = clickdata || topic[0] || "default_topic"; // clickdataを優先
-        const path = `/data/param/patent/alpha/topic=${targetId}/trend/output_${time}.json`;
-        const companyPath = `/data/param/patent/alpha/topic=${targetId}/company`;
+        const targetId = topic[0]; // clickdataを優先
+        const path = `/data/param/patent/alpha/topic=${targetId}/trend/output_topic_${time}.json`;
+
 
         // データを取得
-        const [original, companyList] = await Promise.all([
+        const [original] = await Promise.all([
           fetchData(path),
-          loadCompanies(companyPath),
         ]);
 
-        if (!companyList.includes(company[0])) {
-          console.warn(`Company "${company[0]}" not found.`);
-          setChartData([]);
-          return;
-        }
-
-        // Companyのデータ取得
-        const companyIndex = companyList.indexOf(company[0]);
-        const companyData = original[companyIndex];
-        if (!companyData) {
-          console.warn(`No data found for company index "${companyIndex}".`);
-          setChartData([]);
-          return;
-        }
+        console.log("a",original);
+ 
 
         // JSONデータの整形
-        const formattedData = Object.entries(companyData).map(([key, value]) => ({
+        const formattedData = Object.entries(original).map(([key, value]) => ({
+          
           category: key,
-          value: parseFloat(value) || 0, // 値を数値に変換（ない場合は0）
+          value: key === "" ? 0 : parseFloat(value) * 100 || 0, 
         }));
+        console.log("a",formattedData);
+
 
         // データを降順にソートして上位10件を取得
         const sortedData = formattedData
@@ -76,17 +56,18 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
           .slice(0, 10);
 
         setChartData(sortedData);
-        setTitle(`${company[0]}のFIの分布`);
+        setTitle(`FIの分布`);
+        console.log(chartData);
         onRendered(); // 描画完了を通知
       } catch (error) {
         console.error("データ処理中のエラー:", error);
       }
     };
 
-    if (visualType === "one-comp" && (update || chartData.length === 0 || clickdata)) {
+    if (visualType === "one-topic" && (update || chartData.length === 0 )) {
       loadChartData();
     }
-  }, [visualType, company, clickdata, update]); // clickdata を依存関係に追加
+  }, [visualType, topic, update]); // clickdata を依存関係に追加
 
   return (
     <div>
@@ -127,4 +108,4 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
   );
 };
 
-export default PlotBarChartB;
+export default PlotBarChartA;

@@ -11,7 +11,7 @@ probabilitypath = "public/data/param/patent/alpha/topic={}/probability_optimize_
 outpath = "public/data/param/patent/alpha/topic={}/output_{}.json"
 
 
-topic_list = [2, 3, 1, 0, 9, 6, 8, 7, 11]
+topic_list = [2, 3, 1, 0, 9, 6, 8, 7, 11,5,10]
 
 
 def tocompany(data_path) -> None:
@@ -105,7 +105,7 @@ for topic in topic_list:
         #print(dic)
         print(ratios)
         with open(outpath, 'w') as f:
-            json.dump(dic_prob,f)
+            json.dump(ratios,f)
 
 
 

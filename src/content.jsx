@@ -1,11 +1,10 @@
 import React, { useState,useEffect }from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import Plot from 'react-plotly.js';
 import PlotPieA from './occupy.jsx';
 import PlotPieB from './occupy-company.jsx';
 import PlotPersonaComp from './persona-comp.jsx';
 import PlotPersonaTopic from './persona-topic.jsx';
-import { update } from 'plotly.js';
+
 import PlotBarChartA from './trend-topix.jsx';
 import PlotBarChartB from './trend-comp.jsx';
 
@@ -13,7 +12,7 @@ import PlotBarChartB from './trend-comp.jsx';
 
 const Content = ({plot,visualType,topic,company,resetApply}) => {
 
-    const [data, setData] = useState(null);
+
     const [clickData, setClickData] = useState(); // クリックデータの状態
 
     const handlePieChartClick = (data) => {
