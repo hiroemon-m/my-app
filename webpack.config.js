@@ -13,7 +13,7 @@ module.exports = (env, argv) => {
       filename: "[name].[contenthash].js",
       path: path.resolve(__dirname, "build"),
       clean: true,
-      publicPath: "/",
+      publicPath: "/my-app/",
     },
     resolve: {
       extensions: [".js", ".jsx"],
