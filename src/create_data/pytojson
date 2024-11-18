@@ -1,0 +1,28 @@
+import json
+import torch
+
+for data in ["occupy_mean_{}.pt"]:
+
+    input_path = "experiment_data/patent/alpha/topic{}/persona=5/"+data
+    output_path = "public/data/topic{}/persona=5/"+data
+    topic_li = [2, 3, 1, 0, 9, 6, 8, 7, 11,]
+
+    for i in topic_li:
+        for time in range(10):
+            print(input_path)
+            py_path = input_path.format(i,time)
+            json_path = output_path.format(i,time)
+            output_json = json_path.replace(".pt",".json")
+
+            #pytorchのロード
+            pydata = torch.load(py_path)
+            data = pydata.tolist(),
+            json_data = {"value":data[0]}
+            
+
+
+
+            print(input_path)
+            print(output_json)
+            with open(output_json, 'w') as f:
+                json.dump(json_data,f)
