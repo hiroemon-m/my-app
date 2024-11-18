@@ -2,6 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
+const CopyWebpackPlugin = require("copy-webpack-plugin"); // 追加
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === "production";
@@ -82,7 +83,14 @@ module.exports = (env, argv) => {
         },
       }),
       new Dotenv(),
+      new CopyWebpackPlugin({
+        patterns: [
+          { from: "public/data", to: "data" }, // `public/data` を `build/data` にコピー
+        ],
+      }),
     ],
+
+    
     devtool: isProduction ? "source-map" : "inline-source-map",
     devServer: {
       static: {

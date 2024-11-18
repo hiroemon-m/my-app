@@ -40,8 +40,8 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
       try {
         const time = 9;
         const targetId = clickdata || topic[0] || "default_topic"; // `clickdata`を優先
-        const path = `/data/param/patent/alpha/topic=${targetId}/trend/output_${time}.json`;
-        const companyPath = `/data/param/patent/alpha/topic=${targetId}/company`;
+        const path = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${targetId}/trend/output_${time}.json`;
+        const companyPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${targetId}/company.txt`;
 
         // データを取得
         const [original, companyList] = await Promise.all([

@@ -56,8 +56,8 @@ const PlotPieB = ({ update, visualType, topic, company, onRendered, onClickData 
       const allTopicsData = await Promise.all(
         allTopic.map(async (target_id) => {
           const time = 9;
-          const companyUrl = `/data/param/patent/alpha/topic=${target_id}/company`;
-          const sparseDataUrl = `/data/topic${target_id}/persona=5/occupy_topic_${time}.json`;
+          const companyUrl = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${target_id}/company.txt`;
+          const sparseDataUrl = `${process.env.PUBLIC_URL}/data/topic${target_id}/persona=5/occupy_topic_${time}.json`;
 
           // キャッシュを確認
           if (!dataCache.current.companies[target_id]) {

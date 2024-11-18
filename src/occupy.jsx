@@ -35,8 +35,8 @@ const PlotPieA = ({ update, visualType, topic, onRendered }) => {
       try {
         const time = 0;
         const targetId = topic || "default_topic"; // 初期値として"default_topic"を設定
-        const dataUrl = `/data/topic${targetId}/persona=5/occupy_mean_${time}.json`;
-        const columnUrl = `/data/param/patent/alpha/topic=${targetId}/company`;
+        const dataUrl = `${process.env.PUBLIC_URL}/data/topic${targetId}/persona=5/occupy_mean_${time}.json`;
+        const columnUrl = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${targetId}/company.txt`;
 
         // データ取得
         const [values, labels] = await Promise.all([

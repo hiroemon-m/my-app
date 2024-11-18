@@ -41,7 +41,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
   useEffect(() => {
     if (visualType === "one-topic" && topic) {
       const target_id = topic; // トピックIDの設定
-      const columnPath = `/data/param/patent/alpha/topic=${target_id}/company`;
+      const columnPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${target_id}/company.txt`;
 
       loadCompanies(columnPath).then((data) => {
         setCompanyList(data);
@@ -71,7 +71,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
       const node_beta = Array.from({ length: searchList.length }, () => Array(5).fill(0));
 
       const promises = Array.from({ length: 5 }, (_, i) => i + 5).map((p) => {
-        const parameterPath = `/data/param/patent/alpha/topic=${target_id}/test_optimize_${p}`;
+        const parameterPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${target_id}/test_optimize_${p}.txt`;
         return toList(parameterPath).then(({ alpha_li, beta_li }) => {
           searchList.forEach((k, j) => {
             const idx = companyList.indexOf(k);

@@ -45,7 +45,7 @@ const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トン
       try {
         const allPromises = (topic || ["default_topic"]).map(async (target_id) => {
             console.log("topic",target_id)
-          const columnPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${target_id}/company`;
+          const columnPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${target_id}/company.txt`;
           const companies = await loadCompanies(columnPath);
 
           const companyDict = companies.reduce((acc, value, idx) => {
@@ -60,7 +60,7 @@ const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トン
           const node_beta = Array.from({ length: filteredSearchList.length }, () => Array(5).fill(0));
 
           const promises = Array.from({ length: 5 }, (_, j) => j + 5).map(async (p) => {
-            const parameterPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${target_id}/test_optimize_${p}`;
+            const parameterPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${target_id}/test_optimize_${p}.txt`;
             const { alpha_li, beta_li } = await toList(parameterPath);
 
             filteredSearchList.forEach((k, j) => {
