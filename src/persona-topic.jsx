@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
 
 
+const colormap = {'鹿島建設株式会社':'rgb(229, 134, 6)', "株式会社大林組":'rgb(93, 105, 177)', "清水建設株式会社":'rgb(82, 188, 163)',
+  "大成建設株式会社":'rgb(153, 201, 69)', "株式会社竹中工務店":'rgb(204, 97, 176)', "株式会社長谷工コーポレーション":'rgb(36, 121, 108)', 
+  "前田建設工業株式会社":'rgb(218, 165, 27)',"五洋建設株式会社":'rgb(47, 138, 196)', "株式会社フジタ":'rgb(118, 78, 159)', 
+  "戸田建設株式会社":'rgb(237, 100, 90)', "株式会社熊谷組":'rgb(165, 170, 153)'};
 
 // データをロードする関数
 const loadCompanies = async (dataPath) => {
@@ -96,13 +100,13 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
           textposition: "top left",
           marker: {
             symbol: 'circle',
-            color: arrow_color[j % arrow_color.length],
+            color: colormap[k],
             size: 5,
           },
           name: k,
         }));
 
-        const plotAnnotations = searchList.flatMap((_, j) =>
+        const plotAnnotations = searchList.flatMap((k, j) =>
           Array(4).fill(0).map((_, i) => ({
             x: node_alpha[j][i + 1],
             y: node_beta[j][i + 1],
@@ -112,7 +116,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
             ay: node_beta[j][i],
             axref: 'x',
             ayref: 'y',
-            arrowcolor: arrow_color[j % arrow_color.length],
+            arrowcolor: colormap[k],
             arrowsize: 1.2,
             arrowwidth: 1.2,
             arrowhead: 5,
@@ -150,7 +154,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
               y: 1.05,
               text: '（業界を引っ張り伝統的な分野に取り組んでいる）',
               showarrow: false,
-              font: { size: 12, color: 'gray' },
+              font: { size: 9, color: 'gray' },
               xanchor: 'center',
               yanchor: 'middle',
             },
@@ -159,7 +163,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
               y: 1.05,
               text: '（業界を引っ張り未知の分野に投資している）',
               showarrow: false,
-              font: { size: 12, color: 'gray' },
+              font: { size: 9, color: 'gray' },
               xanchor: 'center',
               yanchor: 'middle',
             },
@@ -168,7 +172,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
               y: -0.05,
               text: '（独自路線を進み伝統的な分野に取り組んでいる）',
               showarrow: false,
-              font: { size: 12, color: 'gray' },
+              font: { size: 9, color: 'gray' },
               xanchor: 'center',
               yanchor: 'middle',
             },
@@ -177,7 +181,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
               y: -0.05,
               text: '（独自路線を進み未知の分野に投資している）',
               showarrow: false,
-              font: { size: 12, color: 'gray' },
+              font: { size: 9, color: 'gray' },
               xanchor: 'center',
               yanchor: 'middle',
             },

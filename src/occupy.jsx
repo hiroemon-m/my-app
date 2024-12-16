@@ -33,6 +33,12 @@ const PlotPieA = ({ update, visualType, topic, onRendered }) => {
     "0":"免震構造","9":"管理システム","6":"廃棄物処理","8":"建築パネル",
     "7":"空調システム","11":"掘削装置","10":"建築設計","5":"トンネル測量"};
 
+  const colormap = {'鹿島建設株式会社':'rgb(229, 134, 6)', "株式会社大林組":'rgb(93, 105, 177)', "清水建設株式会社":'rgb(82, 188, 163)',
+      "大成建設株式会社":'rgb(153, 201, 69)', "株式会社竹中工務店":'rgb(204, 97, 176)', "株式会社長谷工コーポレーション":'rgb(36, 121, 108)', 
+      "前田建設工業株式会社":'rgb(218, 165, 27)',"五洋建設株式会社":'rgb(47, 138, 196)', "株式会社フジタ":'rgb(118, 78, 159)', 
+      "戸田建設株式会社":'rgb(237, 100, 90)', "株式会社熊谷組":'rgb(165, 170, 153)'};
+     
+
   useEffect(() => {
     const loadChartData = async () => {
       try {
@@ -82,7 +88,7 @@ const PlotPieA = ({ update, visualType, topic, onRendered }) => {
             labels: chartData.map((item) => item.label),
             direction: "clockwise",
             marker: {
-              colorscale: "Viridis",
+              colors: chartData.map((item) => colormap[item.label]),
             },
           },
         ]}
