@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
 
+
+
 // データをロードする関数
 const loadCompanies = async (dataPath) => {
   try {
@@ -36,6 +38,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
   const [companyList, setCompanyList] = useState([]);
   const [searchList, setSearchList] = useState([]);
   const [title, setTitle] = useState("");
+
   const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トンネル掘削",
     "0":"免震構造","9":"管理システム","6":"廃棄物処理","8":"建築パネル",
     "7":"空調システム","11":"掘削装置","10":"建築設計","5":"トンネル測量"};
@@ -125,7 +128,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
   }, [update, searchList, companyList, topic]);
 
   return (
-    <div style={{marginTop:"3%", width: "100%", height: "94%" }} >
+    <div  style={{ width:'100vh' ,height: '100vh' }}>
       <Plot
         data={figData}
         layout={{
@@ -134,29 +137,83 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
           annotations: annotations,
           title: {
             text: title,
-            font: { size: 20, color: 'grey' },
+            font: { size: 20, color: 'black' },
             xref: 'paper',
             x: 0.5,
             y: 0.95,
             xanchor: 'center',
+          
           },
+          annotations: [
+            {
+              x: 0.25,
+              y: 1.05,
+              text: '（業界を引っ張り伝統的な分野に取り組んでいる）',
+              showarrow: false,
+              font: { size: 12, color: 'gray' },
+              xanchor: 'center',
+              yanchor: 'middle',
+            },
+            {
+              x: 0.75,
+              y: 1.05,
+              text: '（業界を引っ張り未知の分野に投資している）',
+              showarrow: false,
+              font: { size: 12, color: 'gray' },
+              xanchor: 'center',
+              yanchor: 'middle',
+            },
+            {
+              x: 0.25,
+              y: -0.05,
+              text: '（独自路線を進み伝統的な分野に取り組んでいる）',
+              showarrow: false,
+              font: { size: 12, color: 'gray' },
+              xanchor: 'center',
+              yanchor: 'middle',
+            },
+            {
+              x: 0.75,
+              y: -0.05,
+              text: '（独自路線を進み未知の分野に投資している）',
+              showarrow: false,
+              font: { size: 12, color: 'gray' },
+              xanchor: 'center',
+              yanchor: 'middle',
+            },
+          ],
+
+         
           xaxis: {
-            range: [0, 1.01],
+            title : "新規性",
+            range: [0, 1.03],
             linecolor: 'gray',
             linewidth: 1,
             gridcolor: 'lightgrey',
             gridwidth: 1,
             griddash: 'dot',
+            tickmode:"array",
+            tickvals:[0, 0.5, 1],
+            ticktext:["低", "", "高"],
+            zeroline: false,
+
           },
           yaxis: {
-            range: [0, 1.01],
+            title : "順応性",
+            title_standoff:25,   // Y軸からの距離（見やすくするため）
+            range: [-0.1, 1.1],
             linecolor: 'gray',
             linewidth: 1,
             gridcolor: 'lightgrey',
             gridwidth: 1,
             griddash: 'dot',
+            tickmode:"array",
+            tickvals:[-0.1, 0.5, 1],
+            ticktext:["低", "", "高"],
+            zeroline: false,
+
           },
-          margin: { t: 40, b: 35, l: 40, r: 50 },
+          margin: { t: 40, b: 40, l: 45, r: 50 },
           showlegend: true,
           legend: {
             x: 1,
@@ -166,8 +223,8 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
             borderwidth: 1,
           },
         }}
-   
-        style={{ width: "100%", height: "100%" }} // 必ず全体サイズを親要素に合わせ
+        config={{ responsive: true }} // Plotlyにレスポンシブ設定を有効化
+              style={{marginTop:"2vh", width: "100vh", height: "45vh" }} // 必ず全体サイズを親要素に合わせる
       />
     </div>
   );
