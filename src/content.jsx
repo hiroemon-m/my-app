@@ -7,10 +7,14 @@ import PlotPersonaTopic from './persona-topic.jsx';
 
 import PlotBarChartA from './trend-topix.jsx';
 import PlotBarChartB from './trend-comp.jsx';
+import { getCardData } from "./go-anywhere.jsx"; // 正しいパスを指定
+
+
 
 
 
 const Content = ({plot,visualType,topic,company,resetApply}) => {
+
 
 
     const [clickData, setClickData] = useState(); // クリックデータの状態
@@ -19,7 +23,17 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
       console.log("クリックされたデータ:", data); // デバッグ用
       setClickData(data); // 状態を更新
     };
-    
+
+    const [cardData, setCardData] = useState([]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        const data = await getCardData(plot, visualType, topic);
+        setCardData(data);
+      };
+      fetchData();
+    }, [plot, visualType, topic]);
+  
     
   return (
     
@@ -70,29 +84,10 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
         </Col>
 
         {/* Right Column with Cards */}
-        <Col md={3} style={{ height: '40%' }}>
-          <Row className="h-100">
-            {["ABC", "DEF", "GHI"].map((text, index) => (
-              <Col
-                key={index}
-                xs={12} // 横幅全体を使う
-                className="d-flex align-items-center justify-content-center"
-                style={{ flex: "1 1 auto" }} // 高さを均等に分割
-              >
-                <Card className="w-75 h-75"> {/* カードを親要素に収める */}
-                  <Card.Body className="d-flex flex-column align-items-center justify-content-center">
-                    <Card.Title className="text-secondary-emphasis">{index + 1}</Card.Title>
-                    <Card.Text className="text-secondary-emphasis">{text}</Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-</Col>
+        <Col md={3} style={{ height: "40%" }}>
 
-
-  
-      </Row>
+    </Col>
+  </Row>
 
       {/* Second Row */}
       <Row style={{ height: '50vh' }}>
@@ -174,6 +169,27 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
           
         </Col>
       </Row>
+      <Row className="h-100">
+      {cardData.map((item, index) => (
+        <Col
+          key={index}
+          xs={12} // 各カードを1行に表示、レイアウトに応じて調整可能
+          className="d-flex align-items-center justify-content-center"
+          style={{ flex: "1 1 auto" }}
+        >
+          <Card className="w-75 h-75">
+            <Card.Body className="d-flex flex-column align-items-center justify-content-center">
+              <Card.Title className="text-secondary-emphasis">
+                {item.direction.toUpperCase()} {index + 1}
+              </Card.Title>
+              <Card.Text className="text-secondary-emphasis">
+                {item.values.join(", ")}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      ))}
+    </Row>
     </Container>
   );
 };
