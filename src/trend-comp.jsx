@@ -67,7 +67,7 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
         // JSONデータの整形
         const formattedData = Object.entries(companyData).map(([key, value]) => ({
           category: key,
-          value: key === "" ? 0 : parseFloat(value) * 100 , // 値を数値に変換（ない場合は0）
+          value: key === "" ? 0 : parseFloat(value) * 100 ||0, // 値を数値に変換（ない場合は0）
         }));
 
         // データを降順にソートして上位10件を取得
@@ -115,6 +115,7 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
             linecolor: "gray",
             linewidth: 1,
             mirror: false,
+            ticksuffix: " %",
           },
           yaxis: {
             linecolor: "gray",

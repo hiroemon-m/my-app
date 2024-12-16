@@ -14,7 +14,7 @@ ReactDOM.render(
       domain={domain}
       clientId={clientId}
       authorizationParams={{
-        redirect_uri: window.location.origin, // 認証後にリダイレクトするURL
+        redirect_uri: "https://hiroemon-m.github.io/my-app/", // 認証後にリダイレクトするURL
       }}
     >
       <App />

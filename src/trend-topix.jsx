@@ -92,6 +92,7 @@ const PlotBarChartA = ({ update, visualType, topic, onRendered }) => {
             linecolor: "gray",
             linewidth: 1,
             mirror: false,
+            ticksuffix: " %",
           },
           yaxis: {
             linecolor: "gray",
