@@ -33,6 +33,11 @@ const PlotPersonComp = ({ update, visualType, topic, company, onRendered }) => {
 const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トンネル掘削",
         "0":"免震構造","9":"管理システム","6":"廃棄物処理","8":"建築パネル",
         "7":"空調システム","11":"掘削装置"};
+const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":'rgb(93, 105, 177)', "トンネル掘削":'rgb(82, 188, 163)',
+          "免震構造":'rgb(153, 201, 69)', "管理システム":'rgb(204, 97, 176)', "廃棄物処理":'rgb(36, 121, 108)', 
+          "建築パネル":'rgb(218, 165, 27)',"空調システム":'rgb(47, 138, 196)', "掘削装置":'rgb(118, 78, 159)', 
+        };
+        
   const arrow_color = ['#E24E42', '#E9B000', '#EB6E80', '#9B7EDE', '#63D2FF'];
 
   const [preparedData, setPreparedData] = useState(null);
@@ -102,8 +107,10 @@ const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トン
         textposition: "top left",
         marker: {
           symbol: 'circle',
-          color: arrow_color[j % arrow_color.length],
-          size: 5,
+          color: colormap[IdtoTopic[topic[j]]],
+
+          size: 5
+          ,
         },
         name: IdtoTopic[topic[j]],
       }));
@@ -118,7 +125,7 @@ const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トン
           ayref: 'y',
           ax: preparedData.alpha[j][i],
           ay: preparedData.beta[j][i],
-          arrowcolor: arrow_color[j % arrow_color.length],
+          arrowcolor: colormap[IdtoTopic[topic[j]]],
           arrowsize: 1.2,
           arrowwidth: 1.2,
           arrowhead: 5,

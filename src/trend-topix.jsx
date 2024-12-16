@@ -28,7 +28,7 @@ const PlotBarChartA = ({ update, visualType, topic, onRendered }) => {
   useEffect(() => {
     const loadChartData = async () => {
       try {
-        const time = 9;
+        const time = 4;
         const targetId = topic[0]; // clickdataを優先
         const path = `/data/param/patent/alpha/topic=${targetId}/trend/output_topic_${time}.json`;
 

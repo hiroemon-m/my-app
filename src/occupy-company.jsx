@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Plot from 'react-plotly.js';
 
+const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":'rgb(93, 105, 177)', "トンネル掘削":'rgb(82, 188, 163)',
+  "免震構造":'rgb(153, 201, 69)', "管理システム":'rgb(204, 97, 176)', "廃棄物処理":'rgb(36, 121, 108)', 
+  "建築パネル":'rgb(218, 165, 27)',"空調システム":'rgb(47, 138, 196)', "掘削装置":'rgb(118, 78, 159)', 
+};
+
 // fetchData関数：JSONまたはテキスト形式に対応
 const fetchData = async (url) => {
   try {
@@ -55,7 +60,7 @@ const PlotPieB = ({ update, visualType, topic, company, onRendered, onClickData 
     try {
       const allTopicsData = await Promise.all(
         allTopic.map(async (target_id) => {
-          const time = 9;
+          const time = 4;
           const companyUrl = `/data/param/patent/alpha/topic=${target_id}/company`;
           const sparseDataUrl = `/data/topic${target_id}/persona=5/occupy_topic_${time}.json`;
 
@@ -147,7 +152,9 @@ const PlotPieB = ({ update, visualType, topic, company, onRendered, onClickData 
             values: chartData.map(item => item.value),
             labels: chartData.map(item =>  IdtoTopic[String(item.category)]),
             direction: "clockwise",
-            marker: { colorscale: "Viridis" },
+            marker: {
+              colors: chartData.map((item) => colormap[IdtoTopic[String(item.category)]]),
+            },
           },
         ]}
         layout={{

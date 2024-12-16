@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 
+const colormap = {'鹿島建設株式会社':'rgb(229, 134, 6)', "株式会社大林組":'rgb(93, 105, 177)', "清水建設株式会社":'rgb(82, 188, 163)',
+                "大成建設株式会社":'rgb(153, 201, 69)', "株式会社竹中工務店":'rgb(204, 97, 176)', "株式会社長谷工コーポレーション":'rgb(36, 121, 108)', 
+                "前田建設工業株式会社":'rgb(218, 165, 27)',"五洋建設株式会社":'rgb(47, 138, 196)', "株式会社フジタ":'rgb(118, 78, 159)', 
+                "戸田建設株式会社":'rgb(237, 100, 90)', "株式会社熊谷組":'rgb(165, 170, 153)'};
+               
+
 // データをロードする関数
 const fetchData = async (url) => {
   try {
@@ -33,7 +39,7 @@ const PlotPieA = ({ update, visualType, topic, onRendered }) => {
   useEffect(() => {
     const loadChartData = async () => {
       try {
-        const time = 0;
+        const time = 4;
         const targetId = topic || "default_topic"; // 初期値として"default_topic"を設定
         const dataUrl = `/data/topic${targetId}/persona=5/occupy_mean_${time}.json`;
         const columnUrl = `/data/param/patent/alpha/topic=${targetId}/company`;
@@ -79,7 +85,7 @@ const PlotPieA = ({ update, visualType, topic, onRendered }) => {
             labels: chartData.map((item) => item.label),
             direction: "clockwise",
             marker: {
-              colorscale: "Viridis",
+              colors: chartData.map((item) => colormap[item.label]),
             },
           },
         ]}

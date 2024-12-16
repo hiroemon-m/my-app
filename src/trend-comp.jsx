@@ -38,7 +38,7 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
   useEffect(() => {
     const loadChartData = async () => {
       try {
-        const time = 9;
+        const time = 4;
         const targetId = clickdata || topic[0] || "default_topic"; // `clickdata`を優先
         const path = `/data/param/patent/alpha/topic=${targetId}/trend/output_${time}.json`;
         const companyPath = `/data/param/patent/alpha/topic=${targetId}/company`;

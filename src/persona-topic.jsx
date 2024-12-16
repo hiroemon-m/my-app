@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
 
+const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トンネル掘削",
+  "0":"免震構造","9":"管理システム","6":"廃棄物処理","8":"建築パネル",
+  "7":"空調システム","11":"掘削装置"};
+
+const colormap = {'鹿島建設株式会社':'rgb(229, 134, 6)', "株式会社大林組":'rgb(93, 105, 177)', "清水建設株式会社":'rgb(82, 188, 163)',
+    "大成建設株式会社":'rgb(153, 201, 69)', "株式会社竹中工務店":'rgb(204, 97, 176)', "株式会社長谷工コーポレーション":'rgb(36, 121, 108)', 
+    "前田建設工業株式会社":'rgb(218, 165, 27)',"五洋建設株式会社":'rgb(47, 138, 196)', "株式会社フジタ":'rgb(118, 78, 159)', 
+    "戸田建設株式会社":'rgb(237, 100, 90)', "株式会社熊谷組":'rgb(165, 170, 153)'};
+   
 // データをロードする関数
 const loadCompanies = async (dataPath) => {
   try {
@@ -45,7 +54,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
 
       loadCompanies(columnPath).then((data) => {
         setCompanyList(data);
-        setTitle(`${target_id}のペルソナ`);
+        setTitle(`${IdtoTopic[target_id]}のペルソナ`);
       });
     }
   }, [visualType, topic]);
@@ -90,13 +99,13 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
           textposition: "top left",
           marker: {
             symbol: 'circle',
-            color: arrow_color[j % arrow_color.length],
+            color: colormap[k],
             size: 5,
           },
           name: k,
         }));
 
-        const plotAnnotations = searchList.flatMap((_, j) =>
+        const plotAnnotations = searchList.flatMap((k, j) =>
           Array(4).fill(0).map((_, i) => ({
             x: node_alpha[j][i + 1],
             y: node_beta[j][i + 1],
@@ -106,7 +115,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
             ay: node_beta[j][i],
             axref: 'x',
             ayref: 'y',
-            arrowcolor: arrow_color[j % arrow_color.length],
+            arrowcolor: colormap[k],
             arrowsize: 1.2,
             arrowwidth: 1.2,
             arrowhead: 5,
@@ -120,6 +129,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
       });
     }
   }, [update, searchList, companyList, topic]);
+  
 
   return (
     <div  style={{ width:'100vh' ,height: '100vh' }}>
@@ -131,29 +141,83 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
           annotations: annotations,
           title: {
             text: title,
-            font: { size: 20, color: 'grey' },
+            font: { size: 20, color: 'black' },
             xref: 'paper',
             x: 0.5,
             y: 0.95,
             xanchor: 'center',
+          
           },
+          annotations: [
+            {
+              x: 0.25,
+              y: 1.05,
+              text: '（業界を引っ張り伝統的な分野に取り組んでいる）',
+              showarrow: false,
+              font: { size: 8, color: 'gray' },
+              xanchor: 'center',
+              yanchor: 'middle',
+            },
+            {
+              x: 0.75,
+              y: 1.05,
+              text: '（業界を引っ張り未知の分野に投資している）',
+              showarrow: false,
+              font: { size: 8, color: 'gray' },
+              xanchor: 'center',
+              yanchor: 'middle',
+            },
+            {
+              x: 0.25,
+              y: -0.05,
+              text: '（独自路線を進み伝統的な分野に取り組んでいる）',
+              showarrow: false,
+              font: { size: 8, color: 'gray' },
+              xanchor: 'center',
+              yanchor: 'middle',
+            },
+            {
+              x: 0.75,
+              y: -0.05,
+              text: '（独自路線を進み未知の分野に投資している）',
+              showarrow: false,
+              font: { size: 8, color: 'gray' },
+              xanchor: 'center',
+              yanchor: 'middle',
+            },
+          ],
+
+         
           xaxis: {
-            range: [0, 1.01],
+            title : "新規性",
+            range: [0, 1.03],
             linecolor: 'gray',
             linewidth: 1,
             gridcolor: 'lightgrey',
             gridwidth: 1,
             griddash: 'dot',
+            tickmode:"array",
+            tickvals:[0, 0.5, 1],
+            ticktext:["低", "", "高"],
+            zeroline: false,
+
           },
           yaxis: {
-            range: [0, 1.01],
+            title : "順応性",
+            title_standoff:25,   // Y軸からの距離（見やすくするため）
+            range: [-0.1, 1.1],
             linecolor: 'gray',
             linewidth: 1,
             gridcolor: 'lightgrey',
             gridwidth: 1,
             griddash: 'dot',
+            tickmode:"array",
+            tickvals:[-0.1, 0.5, 1],
+            ticktext:["低", "", "高"],
+            zeroline: false,
+
           },
-          margin: { t: 40, b: 35, l: 40, r: 50 },
+          margin: { t: 40, b: 40, l: 45, r: 50 },
           showlegend: true,
           legend: {
             x: 1,
