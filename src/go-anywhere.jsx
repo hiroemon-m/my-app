@@ -7,8 +7,8 @@ export const getCardData = async (plot, visualType, topic) => {
       }
   
       // データのパスを定義
-      const dataPath = `/data/topic${topic}/persona=5/anywhere_5.json`;
-      const columnPath = `/data/param/patent/alpha/topic=${topic}/column`;
+      const dataPath = `${process.env.PUBLIC_URL}/data/topic${topic}/persona=5/anywhere_5.json`;
+      const columnPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${topic}/column`;
   
       // JSONデータを fetch で同時に取得
       const [responseData, responseColumn] = await Promise.all([
@@ -51,8 +51,8 @@ export const getCardData = async (plot, visualType, topic) => {
     const replaceValuesWithColumns = (values, columnList) =>
         values.map((index) => {
         console.log(index)
-        console.log(columnList[698])
-        const replacedValue = columnList[Number(index)];
+        console.log(columnList[index])
+        const replacedValue = columnList[index];
         return replacedValue;
         });
   
@@ -60,10 +60,10 @@ export const getCardData = async (plot, visualType, topic) => {
 
   
     return [
-      { direction: "UP", values: replaceValuesWithColumns(up,columnList) },
-      { direction: "DOWN", values: replaceValuesWithColumns(down,columnList) },
-      { direction: "RIGHT", values: replaceValuesWithColumns(right,columnList) },
-      { direction: "LEFT", values: replaceValuesWithColumns(left,columnList) },
+      { direction: "順応性UP", values: replaceValuesWithColumns(down,columnList) },
+      { direction: "順応性DOWN", values: replaceValuesWithColumns(up,columnList) },
+      { direction: "新規性UP", values: replaceValuesWithColumns(right,columnList) },
+      { direction: "順応性DOWN", values: replaceValuesWithColumns(left,columnList) },
     ];
   };
   

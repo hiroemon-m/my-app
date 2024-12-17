@@ -41,7 +41,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
       {/* First Row */}
       <Row style={{ height: '50vh' }}>
         {/* Persona Graph */}
-        <Col md={9} style={{ marginLeft: '0%' }}>
+        <Col md={12} style={{ marginLeft: '0%' }}>
 
         {
           visualType === "one-topic" ? (
@@ -80,18 +80,12 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
             <div>該当する表示がありません</div>
           )
         }
-
         </Col>
-
-        {/* Right Column with Cards */}
-        <Col md={3} style={{ height: "40%" }}>
-
-    </Col>
   </Row>
 
       {/* Second Row */}
       <Row style={{ height: '50vh' }}>
-        <Col md={4}>
+        <Col md={6}>
         {
           visualType === "one-topic" ? (
             <PlotPieA
@@ -132,7 +126,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
 
          
         </Col>
-        <Col md={4}>
+        <Col md={6}>
         {
           visualType === "one-topic" ? (
           <PlotBarChartA
@@ -180,7 +174,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
           <Card className="w-75 h-75">
             <Card.Body className="d-flex flex-column align-items-center justify-content-center">
               <Card.Title className="text-secondary-emphasis">
-                {item.direction.toUpperCase()} {index + 1}
+                {item.direction.toUpperCase()} 
               </Card.Title>
               <Card.Text className="text-secondary-emphasis">
                 {item.values.join(", ")}
