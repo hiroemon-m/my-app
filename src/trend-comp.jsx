@@ -42,11 +42,12 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
         const targetId = clickdata || topic[0] || "default_topic"; // `clickdata`を優先
         const path = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${targetId}/trend/output_${time}.json`;
         const companyPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${targetId}/company.txt`;
-
+        const fiPath = `${process.env.PUBLIC_URL}/data/fi_subclass_split.json`;
         // データを取得
-        const [original, companyList] = await Promise.all([
+        const [original, companyList, fiList] = await Promise.all([
           fetchData(path),
           loadCompanies(companyPath),
+          fetchData(fiPath),
         ]);
 
         if (!companyList.includes(company[0])) {
@@ -68,6 +69,7 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
         const formattedData = Object.entries(companyData).map(([key, value]) => ({
           category: key,
           value: key === "" ? 0 : parseFloat(value) * 100 ||0, // 値を数値に変換（ない場合は0）
+          summarize: fiList[key],
         }));
 
         // データを降順にソートして上位10件を取得
@@ -102,6 +104,8 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
             y: chartData.map((item) => item.category).reverse(), // カテゴリ（逆順）
             orientation: "h", // 横向き棒グラフ
             marker: { color: "royalblue" }, // 棒の色
+            hovertemplate:
+            `説明: %{customdata}<br>%: %{x:.2f}% <extra></extra>`, // customdata を参照
           },
         ]}
         layout={{
@@ -126,6 +130,15 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
           plot_bgcolor: "white",
           paper_bgcolor: "white",
           margin: { t: 40, b: 35, l: 80, r: 50 },
+          hoverlabel: {
+            align:"left",
+            font: {
+              size: 11, // ツールチップのフォントサイズ
+              color: "black", // フォントの色
+            },
+            bgcolor: "lightyellow", // ツールチップの背景色
+            bordercolor: "gray", // ツールチップの枠線色
+          },
         }}
 
           style={{ width: "100%", height: "100%" }} // 必ず全体サイズを親要素に合わせ

@@ -31,11 +31,12 @@ const PlotBarChartA = ({ update, visualType, topic, onRendered }) => {
         const time = 9;
         const targetId = topic[0]; // clickdataを優先
         const path = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${targetId}/trend/output_topic_${time}.json`;
-
+        const fiPath = `${process.env.PUBLIC_URL}/data/fi_subclass_split.json`;
 
         // データを取得
-        const [original] = await Promise.all([
+        const [original, fiList] = await Promise.all([
           fetchData(path),
+          fetchData(fiPath),
         ]);
 
         console.log("a",original);
@@ -46,6 +47,7 @@ const PlotBarChartA = ({ update, visualType, topic, onRendered }) => {
           
           category: key,
           value: key === "" ? 0 : parseFloat(value) * 100 || 0, 
+          summarize: fiList[key],
         }));
         console.log("a",formattedData);
 
@@ -79,6 +81,8 @@ const PlotBarChartA = ({ update, visualType, topic, onRendered }) => {
             y: chartData.map((item) => item.category).reverse(),
             orientation: "h",
             marker: { color: "royalblue" },
+            hovertemplate:
+            `説明: %{customdata}<br>%: %{x:.2f}% <extra></extra>`, // customdata を参照
           },
         ]}
         layout={{
@@ -103,6 +107,15 @@ const PlotBarChartA = ({ update, visualType, topic, onRendered }) => {
           plot_bgcolor: "white",
           paper_bgcolor: "white",
           margin: { t: 40, b: 35, l: 80, r: 50 },
+          hoverlabel: {
+            align:"left",
+            font: {
+              size: 11, // ツールチップのフォントサイズ
+              color: "black", // フォントの色
+            },
+            bgcolor: "lightyellow", // ツールチップの背景色
+            bordercolor: "gray", // ツールチップの枠線色
+          },
         }}
 
         style={{ width: "100%", height: "100%" }} // 必ず全体サイズを親要素に合わせ
