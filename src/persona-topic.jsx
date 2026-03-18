@@ -35,7 +35,7 @@ const toList = async (dataPath) => {
   }
 };
 
-const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => {
+const PlotPersonTopic = ({ update, visualType, topic, company, span, onRendered }) => {
   const arrow_color = ['#E24E42', '#E9B000', '#EB6E80', '#9B7EDE', '#63D2FF'];
   const [figData, setFigData] = useState([]);
   const [annotations, setAnnotations] = useState([]);
@@ -51,7 +51,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
   useEffect(() => {
     if (visualType === "one-topic" && topic) {
       const target_id = topic; // トピックIDの設定
-      const columnPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${target_id}/company.txt`;
+      const columnPath = `${process.env.PUBLIC_URL}/data/param/patent/topic=${target_id}/company`;
 
       loadCompanies(columnPath).then((data) => {
         setCompanyList(data);
@@ -81,7 +81,8 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
       const node_beta = Array.from({ length: searchList.length }, () => Array(5).fill(0));
 
       const promises = Array.from({ length: 5 }, (_, i) => i + 5).map((p) => {
-        const parameterPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${target_id}/test_optimize_${p}.txt`;
+        const spanId = span || "2";
+        const parameterPath = `${process.env.PUBLIC_URL}/data/param/patent/topic=${target_id}/span=${spanId}/test_optimize_${p}`;
         return toList(parameterPath).then(({ alpha_li, beta_li }) => {
           searchList.forEach((k, j) => {
             const idx = companyList.indexOf(k);
@@ -129,7 +130,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, onRendered }) => 
         if (onRendered) onRendered();
       });
     }
-  }, [update, searchList, companyList, topic]);
+  }, [update, searchList, companyList, topic, span]);
 
   return (
     <div  style={{ width:'100vh' ,height: '100vh' }}>

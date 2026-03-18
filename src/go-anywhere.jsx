@@ -1,69 +1,37 @@
-// 名前、plot、visualType、topic に応じたデータを取得する関数
-export const getCardData = async (plot, visualType, topic) => {
-    try {
-      // visualType が "one-topic" でない場合、何も返さない
-      if (visualType !== "one-topic") {
-        return [];
-      }
-  
-      // データのパスを定義
-      const dataPath = `${process.env.PUBLIC_URL}/data/topic${topic}/persona=5/anywhere_5.json`;
-      const columnPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${topic}/column`;
-  
-      // JSONデータを fetch で同時に取得
-      const [responseData, responseColumn] = await Promise.all([
-        fetch(dataPath),
-        fetch(columnPath),
-      ]);
-  
-      // レスポンスのエラーチェック
-      if (!responseData.ok || !responseColumn.ok) {
-        throw new Error("データの取得に失敗しました");
-      }
-  
-      // JSONデータをパース
-      const jsonDATA = await responseData.json();
-      const columnList = (await responseColumn.text()).split("\n").map(line => line.trim());
-      console.log(columnList)
-  
-      // "株式会社熊谷組" のデータが存在するかチェック
-      const companyData = jsonDATA["株式会社熊谷組"];
-      if (!companyData || !companyData[topic]) {
-        console.warn("指定したデータが存在しません: 株式会社熊谷組");
-        return [];
-      }
-      
-      console.log("YO",companyData[topic])
-      // データを整形して返す
-      return processData(companyData[topic], columnList);
-    } catch (error) {
-      console.error("データの読み込みに失敗しました:", error);
-      return [];
-    }
-  };
-  
-  // データ整形関数: up, down, right, left を columnList の値で置き換えて返す
-  const processData = (data, columnList) => {
-    if (!data || !columnList) return [];
-  
- const { up = [], down = [], right = [], left = [] } = data;
- // 配列の値を columnList のインデックスで置き換える
-    const replaceValuesWithColumns = (values, columnList) =>
-        values.map((index) => {
-        console.log(index)
-        console.log(columnList[index])
-        const replacedValue = columnList[index];
-        return replacedValue;
-        });
-  
-     
+// anywhere_5.json 形式:
+// [{"company": "...", "color": "...", "novelty_up": [...], "novelty_down": [...], "adapt_up": [...], "adapt_down": [...]}]
+// FIコードは文字列で直接格納されている（インデックスではない）
+export const getCardData = async (plot, visualType, topic, company, span) => {
+  try {
+    if (visualType !== "one-topic") return [];
 
-  
+    const targetTopic = Array.isArray(topic) ? topic[0] : topic;
+    const spanId = span || "2";
+    const targetCompany = Array.isArray(company) ? company[0] : (company || "株式会社熊谷組");
+
+    const dataPath = `${process.env.PUBLIC_URL}/data/app_data/topic${targetTopic}/persona=5/span${spanId}/anywhere_5.json`;
+
+    const response = await fetch(dataPath);
+    if (!response.ok) throw new Error("データの取得に失敗しました");
+
+    const jsonData = await response.json();
+    if (!Array.isArray(jsonData)) return [];
+
+    // 対象企業のデータを探す（見つからなければ最初の企業を使う）
+    let companyEntry = jsonData.find(item => item.company === targetCompany);
+    if (!companyEntry && jsonData.length > 0) {
+      companyEntry = jsonData[0];
+    }
+    if (!companyEntry) return [];
+
     return [
-      { direction: "順応性UP", values: replaceValuesWithColumns(down,columnList) },
-      { direction: "順応性DOWN", values: replaceValuesWithColumns(up,columnList) },
-      { direction: "新規性UP", values: replaceValuesWithColumns(right,columnList) },
-      { direction: "順応性DOWN", values: replaceValuesWithColumns(left,columnList) },
+      { direction: "novelty_up",   label: "新規性↑", values: companyEntry.novelty_up   || [] },
+      { direction: "novelty_down", label: "新規性↓", values: companyEntry.novelty_down || [] },
+      { direction: "adapt_up",     label: "順応性↑", values: companyEntry.adapt_up     || [] },
+      { direction: "adapt_down",   label: "順応性↓", values: companyEntry.adapt_down   || [] },
     ];
-  };
-  
+  } catch (error) {
+    console.error("データの読み込みに失敗しました:", error);
+    return [];
+  }
+};

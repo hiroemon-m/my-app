@@ -36,6 +36,7 @@ const App = () => {
   const [isApplied, setIsApplied] = useState(0);
   const [selectedCompanies, setSelectedCompanies] = useState(['株式会社熊谷組']);
   const [selectedTopics, setSelectedTopics] = useState(['0']);
+  const [selectedSpan, setSelectedSpan] = useState('2');
 
   const handleVisualTypeChange = (value) => {
     setVisualType(value);
@@ -63,6 +64,10 @@ const App = () => {
 
   const TopicCheckboxChange = (topic, buttomtype) => {
     toggleSelection(topic, setSelectedTopics, buttomtype);
+  };
+
+  const handleSpanChange = (value) => {
+    setSelectedSpan(value);
   };
 
   useEffect(() => {
@@ -100,6 +105,8 @@ const App = () => {
                 selectedTopics={selectedTopics}
                 onChangeTopic={TopicCheckboxChange}
                 onChangeCompany={CompanyCheckboxChange}
+                selectedSpan={selectedSpan}
+                onSpanChange={handleSpanChange}
               />
             </Col>
 
@@ -110,6 +117,7 @@ const App = () => {
                 visualType={visualType}
                 topic={selectedTopics}
                 company={selectedCompanies}
+                span={selectedSpan}
                 resetApply={resetIsApplied}
               />
               <p>plot: {isApplied}</p>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 
-// データ取得関数
 const fetchData = async (url) => {
   try {
     const response = await fetch(url);
@@ -19,80 +18,64 @@ const fetchData = async (url) => {
   }
 };
 
-// データをロードする関数
-const loadCompanies = async (dataPath) => {
-  try {
-    const response = await fetch(dataPath);
-    const text = await response.text();
-    return text.split("\n").filter((line) => line.trim() !== "");
-  } catch (error) {
-    console.error("データの読み込みエラー:", error);
-    return [];
-  }
-};
-
-const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRendered }) => {
+const PlotBarChartB = ({ update, visualType, topic, company, span, clickdata, onRendered }) => {
   const [chartData, setChartData] = useState([]);
   const [title, setTitle] = useState("FIの分布");
 
   useEffect(() => {
     const loadChartData = async () => {
       try {
-        const time = 9;
-        const targetId = clickdata || topic[0] || "default_topic"; // `clickdata`を優先
-        const path = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${targetId}/trend/output_${time}.json`;
-        const companyPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${targetId}/company.txt`;
+        const targetId = clickdata || topic[0] || "0";
+        const spanId = span || "2";
+        const path = `${process.env.PUBLIC_URL}/data/app_data/topic${targetId}/persona=5/span${spanId}/occupy_topic_9.json`;
         const fiPath = `${process.env.PUBLIC_URL}/data/fi_subclass_split.json`;
-        // データを取得
-        const [original, companyList, fiList] = await Promise.all([
+
+        const [occupyJson, fiList] = await Promise.all([
           fetchData(path),
-          loadCompanies(companyPath),
           fetchData(fiPath),
         ]);
 
-        if (!companyList.includes(company[0])) {
+        if (!occupyJson || !occupyJson.companies || !occupyJson.fi_codes) {
+          setChartData([]);
+          return;
+        }
+
+        const normalizeString = (str) =>
+          typeof str === "string" ? str.normalize("NFC").trim() : null;
+
+        const sanitizedCompanies = occupyJson.companies.map(normalizeString);
+        const companyIndex = sanitizedCompanies.indexOf(normalizeString(company[0]));
+        if (companyIndex === -1) {
           console.warn(`Company "${company[0]}" not found.`);
           setChartData([]);
           return;
         }
 
-        // Companyのデータ取得
-        const companyIndex = companyList.indexOf(company[0]);
-        const companyData = original[companyIndex];
-        if (!companyData) {
-          console.warn(`No data found for company index "${companyIndex}".`);
-          setChartData([]);
-          return;
-        }
+        // 対象企業の行のみ抽出
+        const fiValues = {};
+        occupyJson.data.forEach(({ row, col, value }) => {
+          if (row === companyIndex) {
+            fiValues[occupyJson.fi_codes[col]] = value * 100;
+          }
+        });
 
-        // JSONデータの整形
-        const formattedData = Object.entries(companyData).map(([key, value]) => ({
-          category: key,
-          value: key === "" ? 0 : parseFloat(value) * 100 ||0, // 値を数値に変換（ない場合は0）
-          summarize: fiList[key],
-        }));
-
-        // データを降順にソートして上位10件を取得
-        const sortedData = formattedData
+        const sortedData = Object.entries(fiValues)
+          .map(([key, value]) => ({ category: key, value, summarize: fiList[key] }))
           .sort((a, b) => b.value - a.value)
           .slice(0, 10);
 
         setChartData(sortedData);
         setTitle(`${company[0]}のFIの分布`);
-        onRendered(); // 描画完了を通知
+        onRendered();
       } catch (error) {
         console.error("データ処理中のエラー:", error);
       }
     };
 
-    // `clickdata`の値が変化したかを明示的に比較
-    if (
-      visualType === "one-comp" &&
-      (update || chartData.length === 0 || clickdata)
-    ) {
+    if (visualType === "one-comp" && (update || chartData.length === 0 || clickdata)) {
       loadChartData();
     }
-  }, [visualType, topic, company, JSON.stringify(clickdata), update]);
+  }, [visualType, topic, company, span, JSON.stringify(clickdata), update]);
 
   return (
     <div style={{marginTop:"3%",marginBottom:"3%", width: "100%", height: "94%" }}>
@@ -100,12 +83,12 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
         data={[
           {
             type: "bar",
-            x: chartData.map((item) => item.value).reverse(), // 横向き棒グラフ用の値（逆順）
-            y: chartData.map((item) => item.category).reverse(), // カテゴリ（逆順）
-            orientation: "h", // 横向き棒グラフ
-            marker: { color: "royalblue" }, // 棒の色
-            hovertemplate:
-            `説明: %{customdata}<br>%: %{x:.2f}% <extra></extra>`, // customdata を参照
+            x: chartData.map((item) => item.value).reverse(),
+            y: chartData.map((item) => item.category).reverse(),
+            orientation: "h",
+            marker: { color: "royalblue" },
+            customdata: chartData.map((item) => item.summarize).reverse(),
+            hovertemplate: `説明: %{customdata}<br>%: %{x:.2f}% <extra></extra>`,
           },
         ]}
         layout={{
@@ -131,17 +114,13 @@ const PlotBarChartB = ({ update, visualType, topic, company, clickdata, onRender
           paper_bgcolor: "white",
           margin: { t: 40, b: 35, l: 80, r: 50 },
           hoverlabel: {
-            align:"left",
-            font: {
-              size: 11, // ツールチップのフォントサイズ
-              color: "black", // フォントの色
-            },
-            bgcolor: "lightyellow", // ツールチップの背景色
-            bordercolor: "gray", // ツールチップの枠線色
+            align: "left",
+            font: { size: 11, color: "black" },
+            bgcolor: "lightyellow",
+            bordercolor: "gray",
           },
         }}
-
-          style={{ width: "100%", height: "100%" }} // 必ず全体サイズを親要素に合わせ
+        style={{ width: "100%", height: "100%" }}
       />
     </div>
   );

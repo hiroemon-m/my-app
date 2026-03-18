@@ -2,7 +2,7 @@
 import React ,{ useState} from 'react';
 import { Accordion, Button, Col, Row } from 'react-bootstrap';
 
-const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyList, selectedCompanies, selectedTopics, onChangeTopic, onChangeCompany }) => {
+const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyList, selectedCompanies, selectedTopics, onChangeTopic, onChangeCompany, selectedSpan, onSpanChange }) => {
   const [inputType, setInputType] = useState(["radio","checkbox"]); // 初期値は "checkbox"
   const handleRadioChange = (event) => {
     onVisualTypeChange(event.target.value);
@@ -41,6 +41,30 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
           >
             可視化
           </Button>
+        </Col>
+      </Row>
+
+      {/* 時間幅選択ボタン */}
+      <Row className="bg-light my-2 px-2">
+        <Col xs={12}>
+          <div className="d-flex align-items-center gap-2">
+            <span className="text-secondary-emphasis" style={{ fontSize: '13px', whiteSpace: 'nowrap' }}>
+              時間を選択
+            </span>
+            <div className="btn-group" role="group">
+              {[{value:'1', label:'1年'}, {value:'2', label:'2年'}, {value:'3', label:'3年'}].map(({value, label}) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => onSpanChange(value)}
+                  className={`btn btn-sm ${selectedSpan === value ? 'btn-dark' : 'btn-outline-secondary'}`}
+                  style={{ fontSize: '13px', padding: '2px 10px' }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
         </Col>
       </Row>
 

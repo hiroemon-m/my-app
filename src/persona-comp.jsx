@@ -32,7 +32,7 @@ const toList = async (dataPath) => {
   }
 };
 
-const PlotPersonComp = ({ update, visualType, topic, company, onRendered }) => {
+const PlotPersonComp = ({ update, visualType, topic, company, span, onRendered }) => {
 const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トンネル掘削",
         "0":"免震構造","9":"管理システム","6":"廃棄物処理","8":"建築パネル",
         "7":"空調システム","11":"掘削装置"};
@@ -54,7 +54,7 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
       try {
         const allPromises = (topic || ["default_topic"]).map(async (target_id) => {
             console.log("topic",target_id)
-          const columnPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${target_id}/company.txt`;
+          const columnPath = `${process.env.PUBLIC_URL}/data/param/patent/topic=${target_id}/company`;
           const companies = await loadCompanies(columnPath);
 
           const companyDict = companies.reduce((acc, value, idx) => {
@@ -69,7 +69,8 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
           const node_beta = Array.from({ length: filteredSearchList.length }, () => Array(5).fill(0));
 
           const promises = Array.from({ length: 5 }, (_, j) => j + 5).map(async (p) => {
-            const parameterPath = `${process.env.PUBLIC_URL}/data/param/patent/alpha/topic=${target_id}/test_optimize_${p}.txt`;
+            const spanId = span || "2";
+            const parameterPath = `${process.env.PUBLIC_URL}/data/param/patent/topic=${target_id}/span=${spanId}/test_optimize_${p}`;
             const { alpha_li, beta_li } = await toList(parameterPath);
 
             filteredSearchList.forEach((k, j) => {
@@ -99,7 +100,7 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
 
     // 初期レンダリング時にもデータを準備
     prepareData();
-  }, [visualType, topic, company]);
+  }, [visualType, topic, company, span]);
 
   useEffect(() => {
     if (update && preparedData) {

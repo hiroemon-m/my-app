@@ -13,7 +13,7 @@ import { getCardData } from "./go-anywhere.jsx"; // 正しいパスを指定
 
 
 
-const Content = ({plot,visualType,topic,company,resetApply}) => {
+const Content = ({plot,visualType,topic,company,span,resetApply}) => {
 
 
 
@@ -28,11 +28,11 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
 
     useEffect(() => {
       const fetchData = async () => {
-        const data = await getCardData(plot, visualType, topic);
+        const data = await getCardData(plot, visualType, topic, company, span);
         setCardData(data);
       };
       fetchData();
-    }, [plot, visualType, topic]);
+    }, [plot, visualType, topic, company, span]);
   
     
   return (
@@ -50,6 +50,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
               visualType={visualType}
               topic={topic}
               company={company}
+              span={span}
               onRendered={resetApply}
               layout={{
                 title: "ペルソナの可視化",
@@ -66,6 +67,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
               visualType={visualType}
               topic={topic}
               company={company}
+              span={span}
               onRendered={resetApply}
               layout={{
                 title: "ペルソナの可視化",
@@ -93,6 +95,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
               visualType={visualType}
               topic={topic}
               company={company}
+              span={span}
               onRendered={resetApply}
               layout={{
                 title: '注目企業の業界に対する占有率',
@@ -108,6 +111,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
               visualType={visualType}
               topic={topic}
               company={company}
+              span={span}
               onRendered={resetApply}
               onClickData={handlePieChartClick} // クリックデータのハンドラーを渡す
               layout={{
@@ -133,7 +137,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
               update={plot}
               visualType={visualType}
               topic={topic}
-
+              span={span}
               onRendered={resetApply}
             data={[]} // データを追加してください
             layout={{
@@ -148,9 +152,8 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
               visualType={visualType}
               topic={topic}
               company={company}
-              clickdata={clickData} // クリックデータを渡す
-    
-
+              span={span}
+              clickdata={clickData}
               onRendered={resetApply}
             data={[]} // データを追加してください
             layout={{
@@ -174,7 +177,7 @@ const Content = ({plot,visualType,topic,company,resetApply}) => {
           <Card className="w-75 h-75">
             <Card.Body className="d-flex flex-column align-items-center justify-content-center">
               <Card.Title className="text-secondary-emphasis">
-                {item.direction.toUpperCase()} 
+                {item.label || item.direction.toUpperCase()}
               </Card.Title>
               <Card.Text className="text-secondary-emphasis">
                 {item.values.join(", ")}
