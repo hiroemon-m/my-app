@@ -1,0 +1,40 @@
+[
+  {
+    "company": "株式会社大林組",
+    "color": "rgb(93, 105, 177)",
+    "novelty_up": [],
+    "novelty_down": [
+      "G01N3/04J",
+      "E21D9/06301Z",
+      "G01N3/00D",
+      "G01V1/00Z",
+      "E21D9/00C"
+    ],
+    "adapt_up": [],
+    "adapt_down": [
+      "G01N3/04J",
+      "E21D9/06301Z",
+      "G01N3/00D",
+      "G01V1/00Z",
+      "E21D9/00C"
+    ]
+  },
+  {
+    "company": "大成建設株式会社",
+    "color": "rgb(153, 201, 69)",
+    "novelty_up": [],
+    "novelty_down": [
+      "G01N3/04J",
+      "E21D9/06301Z",
+      "G01N3/00D",
+      "G01V1/00Z"
+    ],
+    "adapt_up": [],
+    "adapt_down": [
+      "G01N3/04J",
+      "E21D9/06301Z",
+      "G01N3/00D",
+      "G01V1/00Z"
+    ]
+  }
+]
