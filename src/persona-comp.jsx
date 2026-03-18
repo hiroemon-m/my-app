@@ -198,32 +198,30 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
          
           xaxis: {
             title : "新規性",
-            range: [0, 1.03],
+            range: [-1, 1],
             linecolor: 'gray',
             linewidth: 1,
             gridcolor: 'lightgrey',
             gridwidth: 1,
             griddash: 'dot',
             tickmode:"array",
-            tickvals:[0, 0.5, 1],
+            tickvals:[-1, 0, 1],
             ticktext:["低", "", "高"],
             zeroline: false,
-
           },
           yaxis: {
             title : "順応性",
-            title_standoff:25,   // Y軸からの距離（見やすくするため）
-            range: [-0.1, 1.1],
+            title_standoff: 25,
+            range: [-1, 1],
             linecolor: 'gray',
             linewidth: 1,
             gridcolor: 'lightgrey',
             gridwidth: 1,
             griddash: 'dot',
             tickmode:"array",
-            tickvals:[-0.1, 0.5, 1],
+            tickvals:[-1, 0, 1],
             ticktext:["低", "", "高"],
             zeroline: false,
-
           },
           margin: { t: 40, b: 40, l: 45, r: 50 },
           showlegend: true,
