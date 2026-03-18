@@ -3,7 +3,7 @@
 // FIコードは文字列で直接格納されている（インデックスではない）
 export const getCardData = async (plot, visualType, topic, company, span, clickedTopic) => {
   try {
-    if (visualType !== "one-topic" && visualType !== "one-comp") return [];
+    if (visualType !== "one-comp") return [];
 
     // one-comp: クリックされたトピック優先、なければ選択中トピック
     const targetTopic = visualType === "one-comp"

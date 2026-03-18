@@ -48,9 +48,26 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
   const [figData, setFigData] = useState([]);
   const [annotations, setAnnotations] = useState([]);
   const [title, setTitle] = useState("企業の立ち位置");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 4象限の固定ラベル（軸の意味に合わせた説明）
+  // X=新規性（低:伝統的〜高:革新的）、Y=順応性（低:独自路線〜高:業界追随）
+  const quadrantLabels = [
+    { x: 0.02, y: 0.97, text: '業界の流れに乗り<br>伝統的技術を磨く',   xanchor: 'left',  yanchor: 'top'    },
+    { x: 0.98, y: 0.97, text: '業界の流れに乗り<br>革新的技術に挑戦',   xanchor: 'right', yanchor: 'top'    },
+    { x: 0.02, y: 0.03, text: '独自路線で<br>伝統的技術に特化',         xanchor: 'left',  yanchor: 'bottom' },
+    { x: 0.98, y: 0.03, text: '独自路線で<br>革新的技術に挑戦',         xanchor: 'right', yanchor: 'bottom' },
+  ].map(({ x, y, text, xanchor, yanchor }) => ({
+    xref: 'paper', yref: 'paper', x, y, text, xanchor, yanchor,
+    showarrow: false,
+    font: { size: 8, color: 'gray' },
+    bgcolor: 'rgba(255,255,255,0.6)',
+    borderpad: 2,
+  }));
 
   useEffect(() => {
     const prepareData = async () => {
+      setIsLoading(true);
       try {
         const allPromises = (topic || ["default_topic"]).map(async (target_id) => {
             console.log("topic",target_id)
@@ -92,9 +109,11 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
         const combinedSearchList = results.flatMap(result => result.filteredSearchList);
 
         setPreparedData({ alpha: combinedAlpha, beta: combinedBeta, searchList: combinedSearchList });
-        setTitle(`${company}の業界での立ち位置`); // 初期タイトルを設定
+        setTitle(`${company}の業界での立ち位置`);
       } catch (error) {
         console.error("データ準備中のエラー:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -135,12 +154,22 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
     );
 
     setFigData(plotData);
-    setAnnotations(plotAnnotations);
+    // 矢印アノテーション＋4象限ラベルを合わせて設定
+    setAnnotations([...plotAnnotations, ...quadrantLabels]);
     if (onRendered) onRendered();
   }, [preparedData]);
 
   return (
-    <div  style={{ width:'100vh' ,height: '100vh' }}>
+    <div style={{ width: '100vh', height: '100vh', position: 'relative' }}>
+      {isLoading && (
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'rgba(255,255,255,0.75)', zIndex: 10, fontSize: 16, color: '#555',
+        }}>
+          読み込み中...
+        </div>
+      )}
       <Plot
         data={figData}
         layout={{
@@ -154,46 +183,7 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
             x: 0.5,
             y: 0.95,
             xanchor: 'center',
-          
           },
-          annotations: [
-            {
-              x: 0.25,
-              y: 1.05,
-              text: '（業界を引っ張り伝統的な分野に取り組んでいる）',
-              showarrow: false,
-              font: { size: 9, color: 'gray' },
-              xanchor: 'center',
-              yanchor: 'middle',
-            },
-            {
-              x: 0.75,
-              y: 1.05,
-              text: '（業界を引っ張り未知の分野に投資している）',
-              showarrow: false,
-              font: { size: 9, color: 'gray' },
-              xanchor: 'center',
-              yanchor: 'middle',
-            },
-            {
-              x: 0.25,
-              y: -0.05,
-              text: '（独自路線を進み伝統的な分野に取り組んでいる）',
-              showarrow: false,
-              font: { size: 9, color: 'gray' },
-              xanchor: 'center',
-              yanchor: 'middle',
-            },
-            {
-              x: 0.75,
-              y: -0.05,
-              text: '（独自路線を進み未知の分野に投資している）',
-              showarrow: false,
-              font: { size: 9, color: 'gray' },
-              xanchor: 'center',
-              yanchor: 'middle',
-            },
-          ],
 
          
           xaxis: {

@@ -13,18 +13,47 @@ import { getCardData } from "./go-anywhere.jsx"; // 正しいパスを指定
 
 
 
+// チャート読み込み中オーバーレイ
+const LoadingOverlay = () => (
+  <div style={{
+    position: 'absolute', inset: 0,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    background: 'rgba(255,255,255,0.75)', zIndex: 10, fontSize: 15, color: '#666',
+    pointerEvents: 'none',
+  }}>
+    読み込み中...
+  </div>
+);
+
 const Content = ({plot,visualType,topic,company,span,topicList,resetApply}) => {
 
     const [clickData, setClickData] = useState(null);
+    const [isPieLoading,  setIsPieLoading]  = useState(false);
+    const [isBarLoading,  setIsBarLoading]  = useState(false);
 
     const handlePieChartClick = (data) => {
       setClickData(data);
     };
 
-    // 会社・トピックが変わったらクリック選択をリセット
+    // 会社・トピックが変わったらクリック選択をリセット、ローディング開始
     useEffect(() => {
       setClickData(null);
-    }, [company, topic]);
+      setIsPieLoading(true);
+      setIsBarLoading(true);
+    }, [company, topic, span, visualType]);
+
+    // Apply ボタン時もローディング
+    useEffect(() => {
+      if (plot === 1) {
+        setIsPieLoading(true);
+        setIsBarLoading(true);
+      }
+    }, [plot]);
+
+    // クリックでバーチャートのみローディング
+    useEffect(() => {
+      if (clickData !== null) setIsBarLoading(true);
+    }, [clickData]);
 
     const [cardData, setCardData] = useState([]);
 
@@ -89,7 +118,8 @@ const Content = ({plot,visualType,topic,company,span,topicList,resetApply}) => {
 
       {/* Second Row */}
       <Row style={{ height: '50vh' }}>
-        <Col md={6}>
+        <Col md={6} style={{ position: 'relative' }}>
+          {isPieLoading && <LoadingOverlay />}
         {
           visualType === "one-topic" ? (
             <PlotPieA
@@ -98,13 +128,8 @@ const Content = ({plot,visualType,topic,company,span,topicList,resetApply}) => {
               topic={topic}
               company={company}
               span={span}
-              onRendered={resetApply}
-              layout={{
-                title: '注目企業の業界に対する占有率',
-                width: '100%',
-                height: '80%',
-              }}
-              
+              onRendered={() => { setIsPieLoading(false); resetApply(); }}
+              layout={{ title: '注目企業の業界に対する占有率', width: '100%', height: '80%' }}
               className="bg-light"
             />
           ) : visualType === "one-comp" ? (
@@ -115,25 +140,18 @@ const Content = ({plot,visualType,topic,company,span,topicList,resetApply}) => {
               company={company}
               span={span}
               topicList={topicList}
-              onRendered={resetApply}
+              onRendered={() => { setIsPieLoading(false); resetApply(); }}
               onClickData={handlePieChartClick}
-              layout={{
-                title: '注目企業の業界に対する占有率',
-                width: '100%',
-                height: '80%',
-              }}
+              layout={{ title: '注目企業の業界に対する占有率', width: '100%', height: '80%' }}
               className="bg-light"
             />
           ) : (
             <div>該当する表示がありません</div>
           )
         }
-
-        
-
-         
         </Col>
-        <Col md={6}>
+        <Col md={6} style={{ position: 'relative' }}>
+          {isBarLoading && <LoadingOverlay />}
         {
           visualType === "one-topic" ? (
           <PlotBarChartA
@@ -141,13 +159,8 @@ const Content = ({plot,visualType,topic,company,span,topicList,resetApply}) => {
               visualType={visualType}
               topic={topic}
               span={span}
-              onRendered={resetApply}
-            data={[]} // データを追加してください
-            layout={{
-              title: 'Fタームの分布',
-              width: '100%',
-              height: '80%',
-            }}
+              onRendered={() => setIsBarLoading(false)}
+            layout={{ title: 'FIの分布', width: '100%', height: '80%' }}
             className="bg-light"
           />):(
           <PlotBarChartB
@@ -157,16 +170,10 @@ const Content = ({plot,visualType,topic,company,span,topicList,resetApply}) => {
               company={company}
               span={span}
               clickdata={clickData}
-              onRendered={resetApply}
-            data={[]} // データを追加してください
-            layout={{
-              title: 'Fタームの分布',
-              width: '100%',
-              height: '80%',
-            }}
+              onRendered={() => setIsBarLoading(false)}
+            layout={{ title: 'FIの分布', width: '100%', height: '80%' }}
             className="bg-light"
           />)}
-          
         </Col>
       </Row>
       <Row className="h-100">
