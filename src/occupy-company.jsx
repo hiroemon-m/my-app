@@ -82,7 +82,7 @@ const PlotPieB = ({ update, visualType, topic, company, span, onRendered, onClic
         .sort((a, b) => b.value - a.value);
 
       setChartData(normalizedData.slice(0, 10));
-      onRendered();
+      if (onRendered) onRendered();
     } catch (error) {
       console.error("データ処理中のエラー:", error);
     }

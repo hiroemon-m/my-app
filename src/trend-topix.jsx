@@ -57,7 +57,7 @@ const PlotBarChartA = ({ update, visualType, topic, span, onRendered }) => {
 
         setChartData(sortedData);
         setTitle(`FIの分布`);
-        onRendered();
+        if (onRendered) onRendered();
       } catch (error) {
         console.error("データ処理中のエラー:", error);
       }

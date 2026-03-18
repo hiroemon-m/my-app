@@ -73,64 +73,55 @@ const PlotPersonTopic = ({ update, visualType, topic, company, span, onRendered 
     }
   }, [companyList, company]);
 
-  // データの描画
+  // データの描画（searchList・span が変わったら自動で再描画）
   useEffect(() => {
-    if (update && searchList.length > 0 && topic) {
-      const target_id = topic; // トピックIDの設定
-      const node_alpha = Array.from({ length: searchList.length }, () => Array(5).fill(0));
-      const node_beta = Array.from({ length: searchList.length }, () => Array(5).fill(0));
+    if (searchList.length === 0 || !topic) return;
 
-      const promises = Array.from({ length: 5 }, (_, i) => i + 5).map((p) => {
-        const spanId = span || "2";
-        const parameterPath = `${process.env.PUBLIC_URL}/data/param/patent/topic=${target_id}/span=${spanId}/test_optimize_${p}`;
-        return toList(parameterPath).then(({ alpha_li, beta_li }) => {
-          searchList.forEach((k, j) => {
-            const idx = companyList.indexOf(k);
-            node_alpha[j][p - 5] = alpha_li[idx];
-            node_beta[j][p - 5] = beta_li[idx];
-          });
+    const target_id = topic;
+    const node_alpha = Array.from({ length: searchList.length }, () => Array(5).fill(0));
+    const node_beta = Array.from({ length: searchList.length }, () => Array(5).fill(0));
+
+    const promises = Array.from({ length: 5 }, (_, i) => i + 5).map((p) => {
+      const spanId = span || "2";
+      const parameterPath = `${process.env.PUBLIC_URL}/data/param/patent/topic=${target_id}/span=${spanId}/test_optimize_${p}`;
+      return toList(parameterPath).then(({ alpha_li, beta_li }) => {
+        searchList.forEach((k, j) => {
+          const idx = companyList.indexOf(k);
+          node_alpha[j][p - 5] = alpha_li[idx];
+          node_beta[j][p - 5] = beta_li[idx];
         });
       });
+    });
 
-      Promise.all(promises).then(() => {
-        const plotData = searchList.map((k, j) => ({
-          x: node_alpha[j],
-          y: node_beta[j],
-          mode: "lines+markers+text",
-          text: ["1", "2", "3", "4", "5"],
-          textposition: "top left",
-          marker: {
-            symbol: 'circle',
-            color: colormap[k],
-            size: 5,
-          },
-          name: k,
-        }));
+    Promise.all(promises).then(() => {
+      const plotData = searchList.map((k, j) => ({
+        x: node_alpha[j],
+        y: node_beta[j],
+        mode: "lines+markers+text",
+        text: ["1", "2", "3", "4", "5"],
+        textposition: "top left",
+        marker: { symbol: 'circle', color: colormap[k], size: 5 },
+        name: k,
+      }));
 
-        const plotAnnotations = searchList.flatMap((k, j) =>
-          Array(4).fill(0).map((_, i) => ({
-            x: node_alpha[j][i + 1],
-            y: node_beta[j][i + 1],
-            xref: 'x',
-            yref: 'y',
-            ax: node_alpha[j][i],
-            ay: node_beta[j][i],
-            axref: 'x',
-            ayref: 'y',
-            arrowcolor: colormap[k],
-            arrowsize: 1.2,
-            arrowwidth: 1.2,
-            arrowhead: 5,
-            showarrow: true,
-          }))
-        );
+      const plotAnnotations = searchList.flatMap((k, j) =>
+        Array(4).fill(0).map((_, i) => ({
+          x: node_alpha[j][i + 1],
+          y: node_beta[j][i + 1],
+          xref: 'x', yref: 'y',
+          ax: node_alpha[j][i], ay: node_beta[j][i],
+          axref: 'x', ayref: 'y',
+          arrowcolor: colormap[k],
+          arrowsize: 1.2, arrowwidth: 1.2, arrowhead: 5,
+          showarrow: true,
+        }))
+      );
 
-        setFigData(plotData);
-        setAnnotations(plotAnnotations);
-        if (onRendered) onRendered();
-      });
-    }
-  }, [update, searchList, companyList, topic, span]);
+      setFigData(plotData);
+      setAnnotations(plotAnnotations);
+      if (onRendered) onRendered();
+    });
+  }, [searchList, companyList, topic, span]);
 
   return (
     <div  style={{ width:'100vh' ,height: '100vh' }}>

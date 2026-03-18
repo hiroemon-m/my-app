@@ -102,46 +102,42 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
     prepareData();
   }, [visualType, topic, company, span]);
 
+  // preparedData が揃ったら自動で描画
   useEffect(() => {
-    if (update && preparedData) {
-      const plotData = preparedData.searchList.map((k, j) => ({
-        x: preparedData.alpha[j],
-        y: preparedData.beta[j],
-        mode: "lines+markers+text",
-        text: ["1", "2", "3", "4", "5"],
-        textposition: "top left",
-        marker: {
-          symbol: 'circle',
-          color: colormap[IdtoTopic[topic[j]]],
-          size: 5,
-        },
-        name: IdtoTopic[topic[j]],
-      }));
+    if (!preparedData) return;
 
-      const plotAnnotations = preparedData.searchList.flatMap((k, j) =>
-        Array(4).fill(0).map((_, i) => ({
-          x: preparedData.alpha[j][i + 1],
-          y: preparedData.beta[j][i + 1],
-          xref: 'x',
-          yref: 'y',
-          axref: 'x',
-          ayref: 'y',
-          ax: preparedData.alpha[j][i],
-          ay: preparedData.beta[j][i],
-          arrowcolor:colormap[IdtoTopic[topic[j]]],
-          arrowsize: 1.2,
-          arrowwidth: 1.2,
-          arrowhead: 5,
-          showarrow: true,
-        }))
-      );
+    const plotData = preparedData.searchList.map((k, j) => ({
+      x: preparedData.alpha[j],
+      y: preparedData.beta[j],
+      mode: "lines+markers+text",
+      text: ["1", "2", "3", "4", "5"],
+      textposition: "top left",
+      marker: {
+        symbol: 'circle',
+        color: colormap[IdtoTopic[topic[j % topic.length]]],
+        size: 5,
+      },
+      name: IdtoTopic[topic[j % topic.length]],
+    }));
 
-      setFigData(plotData);
-      setAnnotations(plotAnnotations);
+    const plotAnnotations = preparedData.searchList.flatMap((k, j) =>
+      Array(4).fill(0).map((_, i) => ({
+        x: preparedData.alpha[j][i + 1],
+        y: preparedData.beta[j][i + 1],
+        xref: 'x', yref: 'y',
+        axref: 'x', ayref: 'y',
+        ax: preparedData.alpha[j][i],
+        ay: preparedData.beta[j][i],
+        arrowcolor: colormap[IdtoTopic[topic[j % topic.length]]],
+        arrowsize: 1.2, arrowwidth: 1.2, arrowhead: 5,
+        showarrow: true,
+      }))
+    );
 
-      if (onRendered) onRendered();
-    }
-  }, [update, preparedData]);
+    setFigData(plotData);
+    setAnnotations(plotAnnotations);
+    if (onRendered) onRendered();
+  }, [preparedData]);
 
   return (
     <div  style={{ width:'100vh' ,height: '100vh' }}>
