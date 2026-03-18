@@ -1,11 +1,14 @@
 // anywhere_5.json 形式:
 // [{"company": "...", "color": "...", "novelty_up": [...], "novelty_down": [...], "adapt_up": [...], "adapt_down": [...]}]
 // FIコードは文字列で直接格納されている（インデックスではない）
-export const getCardData = async (plot, visualType, topic, company, span) => {
+export const getCardData = async (plot, visualType, topic, company, span, clickedTopic) => {
   try {
-    if (visualType !== "one-topic") return [];
+    if (visualType !== "one-topic" && visualType !== "one-comp") return [];
 
-    const targetTopic = Array.isArray(topic) ? topic[0] : topic;
+    // one-comp: クリックされたトピック優先、なければ選択中トピック
+    const targetTopic = visualType === "one-comp"
+      ? (clickedTopic ? (Array.isArray(clickedTopic) ? clickedTopic[0] : clickedTopic) : (Array.isArray(topic) ? topic[0] : topic))
+      : (Array.isArray(topic) ? topic[0] : topic);
     const spanId = span || "2";
     const targetCompany = Array.isArray(company) ? company[0] : (company || "株式会社熊谷組");
 

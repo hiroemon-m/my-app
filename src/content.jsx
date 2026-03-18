@@ -30,11 +30,11 @@ const Content = ({plot,visualType,topic,company,span,topicList,resetApply}) => {
 
     useEffect(() => {
       const fetchData = async () => {
-        const data = await getCardData(plot, visualType, topic, company, span);
+        const data = await getCardData(plot, visualType, topic, company, span, clickData);
         setCardData(data);
       };
       fetchData();
-    }, [plot, visualType, topic, company, span]);
+    }, [plot, visualType, topic, company, span, clickData]);
   
     
   return (
