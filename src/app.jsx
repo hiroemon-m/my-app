@@ -90,6 +90,7 @@ const App = () => {
             topic={selectedTopics}
             company={selectedCompanies}
             span={selectedSpan}
+            topicList={topicList}
             resetApply={resetIsApplied}
           />
         </Col>

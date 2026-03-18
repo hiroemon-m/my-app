@@ -13,16 +13,18 @@ import { getCardData } from "./go-anywhere.jsx"; // 正しいパスを指定
 
 
 
-const Content = ({plot,visualType,topic,company,span,resetApply}) => {
+const Content = ({plot,visualType,topic,company,span,topicList,resetApply}) => {
 
-
-
-    const [clickData, setClickData] = useState(); // クリックデータの状態
+    const [clickData, setClickData] = useState(null);
 
     const handlePieChartClick = (data) => {
-      console.log("クリックされたデータ:", data); // デバッグ用
-      setClickData(data); // 状態を更新
+      setClickData(data);
     };
+
+    // 会社・トピックが変わったらクリック選択をリセット
+    useEffect(() => {
+      setClickData(null);
+    }, [company, topic]);
 
     const [cardData, setCardData] = useState([]);
 
@@ -112,8 +114,9 @@ const Content = ({plot,visualType,topic,company,span,resetApply}) => {
               topic={topic}
               company={company}
               span={span}
+              topicList={topicList}
               onRendered={resetApply}
-              onClickData={handlePieChartClick} // クリックデータのハンドラーを渡す
+              onClickData={handlePieChartClick}
               layout={{
                 title: '注目企業の業界に対する占有率',
                 width: '100%',

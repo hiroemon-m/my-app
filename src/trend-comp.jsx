@@ -72,7 +72,7 @@ const PlotBarChartB = ({ update, visualType, topic, company, span, clickdata, on
       }
     };
 
-    if (visualType === "one-comp" && (update || chartData.length === 0 || clickdata)) {
+    if (visualType === "one-comp") {
       loadChartData();
     }
   }, [visualType, topic, company, span, JSON.stringify(clickdata), update]);

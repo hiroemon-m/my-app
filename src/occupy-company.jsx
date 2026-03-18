@@ -27,10 +27,8 @@ const getRowSums = (occupyJson) => {
   return sums;
 };
 
-const PlotPieB = ({ update, visualType, topic, company, span, onRendered, onClickData }) => {
+const PlotPieB = ({ update, visualType, topic, company, span, topicList, onRendered, onClickData }) => {
   const [chartData, setChartData] = useState([]);
-  const [title, setTitle] = useState("注目トピックに関する特許の企業占有率");
-  const allTopic = [2, 3, 1, 0, 9, 6, 8, 7, 11];
 
   const IdtoTopic = {"2":"コンクリート構造","3":"地盤改良","1":"トンネル掘削",
     "0":"免震構造","9":"管理システム","6":"廃棄物処理","8":"建築パネル",
@@ -42,12 +40,17 @@ const PlotPieB = ({ update, visualType, topic, company, span, onRendered, onClic
 
   const dataCache = useRef({});
 
+  // サイドバーのtopicListを使う（未指定時はフォールバック）
+  const targetTopics = (topicList && topicList.length > 0)
+    ? topicList.map(Number)
+    : [2, 3, 1, 0, 9, 6, 8, 7, 11];
+
   const loadData = async () => {
     try {
       const spanId = span || "2";
       const allTopicsData = await Promise.all(
-        allTopic.map(async (target_id) => {
-          const cacheKey = `${target_id}-${spanId}`;
+        targetTopics.map(async (target_id) => {
+          const cacheKey = `${target_id}-${spanId}-${company[0]}`;
           if (!dataCache.current[cacheKey]) {
             const url = `${process.env.PUBLIC_URL}/data/app_data/topic${target_id}/persona=5/span${spanId}/occupy_topic_9.json`;
             dataCache.current[cacheKey] = await fetchJson(url);
@@ -81,7 +84,7 @@ const PlotPieB = ({ update, visualType, topic, company, span, onRendered, onClic
         .map(item => ({ category: item.topic, value: item.value / totalValue }))
         .sort((a, b) => b.value - a.value);
 
-      setChartData(normalizedData.slice(0, 10));
+      setChartData(normalizedData);
       if (onRendered) onRendered();
     } catch (error) {
       console.error("データ処理中のエラー:", error);
@@ -92,7 +95,7 @@ const PlotPieB = ({ update, visualType, topic, company, span, onRendered, onClic
     if (visualType === "one-comp") {
       loadData();
     }
-  }, [update, visualType, span]);
+  }, [update, visualType, span, company, topicList]);
 
   const handlePlotClick = (event) => {
     if (event.points && event.points[0]) {
@@ -118,7 +121,7 @@ const PlotPieB = ({ update, visualType, topic, company, span, onRendered, onClic
           },
         ]}
         layout={{
-          title: title,
+          title: `${company[0] || ""} の出願特許 トピック分布`,
           showlegend: true,
           plot_bgcolor: "white",
           paper_bgcolor: "white",
