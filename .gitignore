@@ -21,3 +21,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# npy binary files
+public/data/param/**/*.npy
+public/data/param/**/persona5/
+public/data/param/**/persona=5/

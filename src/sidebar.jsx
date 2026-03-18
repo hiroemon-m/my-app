@@ -3,7 +3,8 @@ import React ,{ useState} from 'react';
 import { Accordion, Button, Col, Row } from 'react-bootstrap';
 
 const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyList, selectedCompanies, selectedTopics, onChangeTopic, onChangeCompany, selectedSpan, onSpanChange }) => {
-  const [inputType, setInputType] = useState(["radio","checkbox"]); // 初期値は "checkbox"
+  const [inputType, setInputType] = useState(["radio","checkbox"]);
+  const [companyFilter, setCompanyFilter] = useState("");
   const handleRadioChange = (event) => {
     onVisualTypeChange(event.target.value);
       if (event.target.value=="one-comp"){
@@ -135,13 +136,23 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
           <Accordion.Item eventKey="2" className="white">
             <Accordion.Header>Company</Accordion.Header>
             <Accordion.Body>
-              {companyList.map((company) => (
+              <input
+                type="text"
+                placeholder="企業名で絞り込み..."
+                value={companyFilter}
+                onChange={(e) => setCompanyFilter(e.target.value)}
+                className="form-control form-control-sm mb-2"
+                style={{ fontSize: '13px' }}
+              />
+              {companyList
+                .filter(company => company.includes(companyFilter))
+                .map((company) => (
                 <div key={company}>
                   <input
-                    type={inputType[1]} 
-                    id = {company}
+                    type={inputType[1]}
+                    id={company}
                     checked={selectedCompanies.includes(company)}
-                    onChange={() => onChangeCompany(company,inputType[1])}
+                    onChange={() => onChangeCompany(company, inputType[1])}
                     name='company'
                   />
                   <label htmlFor={company}>{company}</label>
