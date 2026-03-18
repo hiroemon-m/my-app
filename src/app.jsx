@@ -2,25 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Sidebar from './sidebar.jsx';
 import Content from './content.jsx';
-import { useAuth0 } from '@auth0/auth0-react';
 
 const App = () => {
-  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0(); // Auth0の情報を取得
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = async () => {
-    try {
-      await loginWithRedirect({
-        connection: 'Username-Password-Authentication',
-        username,
-        password,
-      });
-    } catch (error) {
-      console.error("ログインエラー:", error.message);
-    }
-  };
-
   const arrowColor = [
     '#E24E42', '#E9B000', '#EB6E80', '#9B7EDE', '#63D2FF',
     '#3E9E6F', '#F38181', '#545E75', '#FFB627', '#577590',
@@ -82,48 +65,34 @@ const App = () => {
   return (
     <Container id="react-content" fluid className="bg-light">
       <Row>
-        {!isAuthenticated ? ( // ログインしていない場合
-          <Col>
-            <div>
-              <h1>ログインが必要です</h1>
-              <button className="btn btn-primary" onClick={handleLogin}>
-                ログイン
-              </button>
-            </div>
-          </Col>
-        ) : ( // ログインしている場合
-          <>
-            {/* サイドバー */}
-            <Col md={3} className="border-end">
-              <Sidebar
-                onApply={handleApply}
-                visualType={visualType}
-                onVisualTypeChange={handleVisualTypeChange}
-                topicList={topicList}
-                companyList={companyList}
-                selectedCompanies={selectedCompanies}
-                selectedTopics={selectedTopics}
-                onChangeTopic={TopicCheckboxChange}
-                onChangeCompany={CompanyCheckboxChange}
-                selectedSpan={selectedSpan}
-                onSpanChange={handleSpanChange}
-              />
-            </Col>
+        {/* サイドバー */}
+        <Col md={3} className="border-end">
+          <Sidebar
+            onApply={handleApply}
+            visualType={visualType}
+            onVisualTypeChange={handleVisualTypeChange}
+            topicList={topicList}
+            companyList={companyList}
+            selectedCompanies={selectedCompanies}
+            selectedTopics={selectedTopics}
+            onChangeTopic={TopicCheckboxChange}
+            onChangeCompany={CompanyCheckboxChange}
+            selectedSpan={selectedSpan}
+            onSpanChange={handleSpanChange}
+          />
+        </Col>
 
-            {/* メインコンテンツ */}
-            <Col md={9} className="border-end" style={{ height: '100vh' }}>
-              <Content
-                plot={isApplied}
-                visualType={visualType}
-                topic={selectedTopics}
-                company={selectedCompanies}
-                span={selectedSpan}
-                resetApply={resetIsApplied}
-              />
-              <p>plot: {isApplied}</p>
-            </Col>
-          </>
-        )}
+        {/* メインコンテンツ */}
+        <Col md={9} className="border-end" style={{ height: '100vh' }}>
+          <Content
+            plot={isApplied}
+            visualType={visualType}
+            topic={selectedTopics}
+            company={selectedCompanies}
+            span={selectedSpan}
+            resetApply={resetIsApplied}
+          />
+        </Col>
       </Row>
     </Container>
   );
