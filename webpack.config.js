@@ -85,7 +85,8 @@ module.exports = (env, argv) => {
       new Dotenv(),
       new CopyWebpackPlugin({
         patterns: [
-          { from: "public/data", to: "data" }, // `public/data` を `build/data` にコピー
+          { from: "public/data", to: "data" },   // `public/data` を `build/data` にコピー
+          { from: "public/param", to: "param" },  // `public/param` を `build/param` にコピー
         ],
       }),
     ],
@@ -95,6 +96,7 @@ module.exports = (env, argv) => {
     devServer: {
       static: {
         directory: path.join(__dirname, "public"),
+        publicPath: "/my-app",  // PUBLIC_URL=/my-app と一致させる
       },
       compress: true,
       port: 3000,
