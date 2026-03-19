@@ -82,18 +82,23 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
           const newSearchList = Array.isArray(company) ? company : [company];
           const filteredSearchList = newSearchList.filter(value => value in companyDict);
 
-          const node_alpha = Array.from({ length: filteredSearchList.length }, () => Array(5).fill(0));
-          const node_beta = Array.from({ length: filteredSearchList.length }, () => Array(5).fill(0));
+          // span別に存在するファイル数を決定
+          const spanId = span || "2";
+          const spanToMaxP = { '1': 20, '2': 9, '3': 6 };
+          const maxP = spanToMaxP[String(spanId)] ?? 9;
+          const numPoints = maxP + 1;
 
-          const promises = Array.from({ length: 5 }, (_, j) => j + 5).map(async (p) => {
-            const spanId = span || "2";
+          const node_alpha = Array.from({ length: filteredSearchList.length }, () => Array(numPoints).fill(0));
+          const node_beta = Array.from({ length: filteredSearchList.length }, () => Array(numPoints).fill(0));
+
+          const promises = Array.from({ length: numPoints }, (_, p) => p).map(async (p) => {
             const parameterPath = `${process.env.PUBLIC_URL}/param/patent/topic=${target_id}/span=${spanId}/test_optimize_${p}`;
             const { alpha_li, beta_li } = await toList(parameterPath);
 
             filteredSearchList.forEach((k, j) => {
               const idx = companies.indexOf(k);
-              node_alpha[j][p - 5] = alpha_li[idx];
-              node_beta[j][p - 5] = beta_li[idx];
+              node_alpha[j][p] = alpha_li[idx];
+              node_beta[j][p] = beta_li[idx];
             });
           });
 
@@ -125,22 +130,24 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
   useEffect(() => {
     if (!preparedData) return;
 
-    const plotData = preparedData.searchList.map((k, j) => ({
-      x: preparedData.alpha[j],
-      y: preparedData.beta[j],
-      mode: "lines+markers+text",
-      text: ["1", "2", "3", "4", "5"],
-      textposition: "top left",
-      marker: {
-        symbol: 'circle',
-        color: colormap[IdtoTopic[topic[j % topic.length]]],
-        size: 5,
-      },
-      name: IdtoTopic[topic[j % topic.length]],
-    }));
+    const plotData = preparedData.searchList.map((k, j) => {
+      const n = preparedData.alpha[j].length;
+      return {
+        x: preparedData.alpha[j],
+        y: preparedData.beta[j],
+        mode: "lines+markers",
+        marker: {
+          symbol: preparedData.alpha[j].map((_, i) => i === 0 ? 'square' : i === n - 1 ? 'star' : 'circle'),
+          color: colormap[IdtoTopic[topic[j % topic.length]]],
+          size: preparedData.alpha[j].map((_, i) => i === 0 || i === n - 1 ? 9 : 5),
+        },
+        name: IdtoTopic[topic[j % topic.length]],
+      };
+    });
 
+    // 全時点間に矢印を描画
     const plotAnnotations = preparedData.searchList.flatMap((k, j) =>
-      Array(4).fill(0).map((_, i) => ({
+      Array(preparedData.alpha[j].length - 1).fill(0).map((_, i) => ({
         x: preparedData.alpha[j][i + 1],
         y: preparedData.beta[j][i + 1],
         xref: 'x', yref: 'y',
