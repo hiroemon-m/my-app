@@ -80,13 +80,18 @@ const PlotPersonTopic = ({ update, visualType, topic, company, span, onRendered 
   // 検索対象のフィルタリング
   useEffect(() => {
     if (companyList.length > 0) {
+      // NFC正規化とtrimで確実にマッチング
+      const normalize = (s) => typeof s === 'string' ? s.normalize('NFC').trim() : '';
       const companyDict = companyList.reduce((acc, value, idx) => {
-        acc[value] = idx;
+        acc[normalize(value)] = idx;
         return acc;
       }, {});
 
       const newSearchList = Array.isArray(company) ? company : [company];
-      setSearchList(newSearchList.filter(value => value in companyDict));
+      const matched = newSearchList.filter(value => normalize(value) in companyDict);
+      setSearchList(matched);
+      // マッチしなかった場合もisLoadingを解除
+      if (matched.length === 0) setIsLoading(false);
     }
   }, [companyList, company]);
 
@@ -104,13 +109,18 @@ const PlotPersonTopic = ({ update, visualType, topic, company, span, onRendered 
     const node_alpha = Array.from({ length: searchList.length }, () => Array(numPoints).fill(0));
     const node_beta = Array.from({ length: searchList.length }, () => Array(numPoints).fill(0));
 
+    const normalize = (s) => typeof s === 'string' ? s.normalize('NFC').trim() : '';
+    const normalizedCompanyList = companyList.map(normalize);
+
     const promises = Array.from({ length: numPoints }, (_, p) => p).map((p) => {
       const parameterPath = `${process.env.PUBLIC_URL}/param/patent/topic=${target_id}/span=${spanId}/test_optimize_${p}`;
       return toList(parameterPath).then(({ alpha_li, beta_li }) => {
         searchList.forEach((k, j) => {
-          const idx = companyList.indexOf(k);
-          node_alpha[j][p] = alpha_li[idx];
-          node_beta[j][p] = beta_li[idx];
+          const idx = normalizedCompanyList.indexOf(normalize(k));
+          if (idx !== -1) {
+            node_alpha[j][p] = alpha_li[idx];
+            node_beta[j][p] = beta_li[idx];
+          }
         });
       });
     });

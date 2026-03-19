@@ -74,13 +74,16 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
           const columnPath = `${process.env.PUBLIC_URL}/param/patent/topic=${target_id}/company`;
           const companies = await loadCompanies(columnPath);
 
-          const companyDict = companies.reduce((acc, value, idx) => {
+          // NFC正規化で確実にマッチング
+          const normalize = (s) => typeof s === 'string' ? s.normalize('NFC').trim() : '';
+          const normalizedCompanies = companies.map(normalize);
+          const companyDict = normalizedCompanies.reduce((acc, value, idx) => {
             acc[value] = idx;
             return acc;
           }, {});
 
           const newSearchList = Array.isArray(company) ? company : [company];
-          const filteredSearchList = newSearchList.filter(value => value in companyDict);
+          const filteredSearchList = newSearchList.filter(value => normalize(value) in companyDict);
 
           // span別に存在するファイル数を決定
           const spanId = span || "2";
@@ -96,9 +99,11 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
             const { alpha_li, beta_li } = await toList(parameterPath);
 
             filteredSearchList.forEach((k, j) => {
-              const idx = companies.indexOf(k);
-              node_alpha[j][p] = alpha_li[idx];
-              node_beta[j][p] = beta_li[idx];
+              const idx = normalizedCompanies.indexOf(normalize(k));
+              if (idx !== -1) {
+                node_alpha[j][p] = alpha_li[idx];
+                node_beta[j][p] = beta_li[idx];
+              }
             });
           });
 
