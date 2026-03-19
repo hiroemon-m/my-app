@@ -6,25 +6,16 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
   "建築パネル":'rgb(218, 165, 27)',"空調システム":'rgb(47, 138, 196)', "掘削装置":'rgb(118, 78, 159)', 
 };
 
+const normalize = (s) => typeof s === 'string' ? s.normalize('NFC').trim() : '';
+
 const fetchJson = async (url) => {
   try {
     const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) return null;
     return await response.json();
-  } catch (error) {
-    console.error("データの読み込みエラー:", error);
+  } catch {
     return null;
   }
-};
-
-// {companies, fi_codes, data} 形式のスパースデータから行方向の和を計算
-const getRowSums = (occupyJson) => {
-  const numRows = occupyJson.companies.length;
-  const sums = Array(numRows).fill(0);
-  occupyJson.data.forEach(({ row, value }) => {
-    sums[row] += value;
-  });
-  return sums;
 };
 
 const PlotPieB = ({ update, visualType, topic, company, span, topicList, onRendered, onClickData }) => {
@@ -38,60 +29,55 @@ const PlotPieB = ({ update, visualType, topic, company, span, topicList, onRende
     "免震構造":"0","管理システム":"9","廃棄物処理":"6","建築パネル":"8",
     "空調システム":"7","掘削装置":"11","建築設計":"10","トンネル測量":"5"};
 
-  const dataCache = useRef({});
+  // spanごとの最終時点ファイル名（occupy_mean は小さくて高速）
+  const getLastMeanFile = (spanId) => {
+    const map = { '1': 'occupy_mean_20.json', '2': 'occupy_mean_9.json', '3': 'occupy_mean_6.json' };
+    return map[String(spanId)] || 'occupy_mean_9.json';
+  };
 
-  // サイドバーのtopicListを使う（未指定時はフォールバック）
+  // サイドバーのtopicListを使う
   const targetTopics = (topicList && topicList.length > 0)
     ? topicList.map(Number)
     : [2, 3, 1, 0, 9, 6, 8, 7, 11];
 
-  // spanによってoccupy_topicのファイル名が異なる
-  const getOccupyTopicFile = (spanId) => {
-    const map = { '1': 'occupy_topic_20.json', '2': 'occupy_topic_9.json', '3': 'occupy_topic_6.json' };
-    return map[String(spanId)] || 'occupy_topic_9.json';
-  };
+  // ファイルキャッシュ（span × topicId ごと）
+  const fileCache = useRef({});
 
   const loadData = async () => {
+    if (!company || !company[0]) return;
     try {
-      const spanId = span || "2";
-      const occupyTopicFile = getOccupyTopicFile(spanId);
-      const allTopicsData = await Promise.all(
-        targetTopics.map(async (target_id) => {
-          const cacheKey = `${target_id}-${spanId}-${company[0]}`;
-          if (!dataCache.current[cacheKey]) {
-            const url = `${process.env.PUBLIC_URL}/data/app_data/topic${target_id}/persona=5/span${spanId}/${occupyTopicFile}`;
-            dataCache.current[cacheKey] = await fetchJson(url);
+      const spanId = String(span || '2');
+      const meanFile = getLastMeanFile(spanId);
+      const targetCompany = normalize(company[0]);
+
+      const results = await Promise.all(
+        targetTopics.map(async (topicId) => {
+          const cacheKey = `${topicId}-${spanId}`;
+          if (!fileCache.current[cacheKey]) {
+            const url = `${process.env.PUBLIC_URL}/data/app_data/topic${topicId}/persona=5/span${spanId}/${meanFile}`;
+            fileCache.current[cacheKey] = await fetchJson(url);
           }
-
-          const occupyJson = dataCache.current[cacheKey];
-          if (!occupyJson || !occupyJson.companies) return null;
-
-          const normalizeString = (str) =>
-            typeof str === "string" ? str.normalize("NFC").trim() : null;
-
-          const sanitizedCompanies = occupyJson.companies.map(normalizeString);
-          const sanitizedCompany = normalizeString(company[0]);
-
-          const companyIndex = sanitizedCompanies.indexOf(sanitizedCompany);
-          if (companyIndex === -1) return null;
-
-          const rowSums = getRowSums(occupyJson);
-          return { topic: target_id, value: rowSums[companyIndex] };
+          const data = fileCache.current[cacheKey];
+          if (!Array.isArray(data)) return null;
+          // [{company, value}] から対象会社を検索
+          const entry = data.find(d => normalize(d.company) === targetCompany);
+          return entry && entry.value > 0 ? { topic: topicId, value: entry.value } : null;
         })
       );
 
-      const filteredData = allTopicsData.filter((data) => data !== null);
-      const totalValue = filteredData.reduce((sum, item) => sum + item.value, 0);
-      if (totalValue === 0) {
+      const filtered = results.filter(d => d !== null);
+      const total = filtered.reduce((s, d) => s + d.value, 0);
+      if (total === 0) {
         setChartData([]);
+        if (onRendered) onRendered();
         return;
       }
 
-      const normalizedData = filteredData
-        .map(item => ({ category: item.topic, value: item.value / totalValue }))
-        .sort((a, b) => b.value - a.value);
-
-      setChartData(normalizedData);
+      setChartData(
+        filtered
+          .map(d => ({ category: d.topic, value: d.value / total }))
+          .sort((a, b) => b.value - a.value)
+      );
       if (onRendered) onRendered();
     } catch (error) {
       console.error("データ処理中のエラー:", error);
