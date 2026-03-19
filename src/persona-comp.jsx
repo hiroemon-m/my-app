@@ -65,61 +65,55 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
     borderpad: 2,
   }));
 
+  // データロード: 各トピックのcompanyファイルから選択会社のインデックスを特定し、
+  // そのインデックスのデータをtest_optimize_Nから取得して軌跡を構築
   useEffect(() => {
-    const prepareData = async () => {
+    if (!topic || topic.length === 0 || !company) return;
+
+    const normalize = (s) => typeof s === 'string' ? s.normalize('NFC').trim() : '';
+    const selectedCompanies = (Array.isArray(company) ? company : [company]).map(normalize);
+    const spanId = String(span || '2');
+    const spanToMaxP = { '1': 20, '2': 9, '3': 6 };
+    const maxP = spanToMaxP[spanId] ?? 9;
+
+    const loadAll = async () => {
       setIsLoading(true);
       try {
-        const allPromises = (topic || ["default_topic"]).map(async (target_id) => {
-            console.log("topic",target_id)
-          const columnPath = `${process.env.PUBLIC_URL}/param/patent/topic=${target_id}/company`;
-          const companies = await loadCompanies(columnPath);
+        const allTraces = [];
 
-          // NFC正規化で確実にマッチング
-          const normalize = (s) => typeof s === 'string' ? s.normalize('NFC').trim() : '';
-          const normalizedCompanies = companies.map(normalize);
-          const companyDict = normalizedCompanies.reduce((acc, value, idx) => {
-            acc[value] = idx;
-            return acc;
-          }, {});
+        for (const topicId of topic) {
+          // 1. そのトピックのcompanyリストを読み込む
+          const companyUrl = `${process.env.PUBLIC_URL}/param/patent/topic=${topicId}/company`;
+          const rawCompanies = await loadCompanies(companyUrl);
+          const normalizedCompanies = rawCompanies.map(normalize);
 
-          const newSearchList = Array.isArray(company) ? company : [company];
-          const filteredSearchList = newSearchList.filter(value => normalize(value) in companyDict);
+          // 2. サイドバーで選択した各会社のインデックスをcompanyリストから特定
+          const companyIndexMap = selectedCompanies
+            .map(cn => ({ name: cn, idx: normalizedCompanies.indexOf(cn) }))
+            .filter(({ idx }) => idx !== -1);
 
-          // span別に存在するファイル数を決定
-          const spanId = span || "2";
-          const spanToMaxP = { '1': 20, '2': 9, '3': 6 };
-          const maxP = spanToMaxP[String(spanId)] ?? 9;
-          const numPoints = maxP + 1;
+          if (companyIndexMap.length === 0) continue;
 
-          const node_alpha = Array.from({ length: filteredSearchList.length }, () => Array(numPoints).fill(0));
-          const node_beta = Array.from({ length: filteredSearchList.length }, () => Array(numPoints).fill(0));
+          // 3. 全時点のtest_optimize_Nファイルを並列取得
+          const timeDataList = await Promise.all(
+            Array.from({ length: maxP + 1 }, (_, p) =>
+              toList(`${process.env.PUBLIC_URL}/param/patent/topic=${topicId}/span=${spanId}/test_optimize_${p}`)
+            )
+          );
 
-          const promises = Array.from({ length: numPoints }, (_, p) => p).map(async (p) => {
-            const parameterPath = `${process.env.PUBLIC_URL}/param/patent/topic=${target_id}/span=${spanId}/test_optimize_${p}`;
-            const { alpha_li, beta_li } = await toList(parameterPath);
-
-            filteredSearchList.forEach((k, j) => {
-              const idx = normalizedCompanies.indexOf(normalize(k));
-              if (idx !== -1) {
-                node_alpha[j][p] = alpha_li[idx];
-                node_beta[j][p] = beta_li[idx];
-              }
+          // 4. 各会社について、各時点のインデックス行のデータで軌跡を構築
+          for (const { name, idx } of companyIndexMap) {
+            allTraces.push({
+              topicId,
+              companyName: name,
+              alpha: timeDataList.map(({ alpha_li }) => alpha_li[idx]),
+              beta:  timeDataList.map(({ beta_li  }) => beta_li[idx]),
             });
-          });
+          }
+        }
 
-          await Promise.all(promises);
-
-          return { node_alpha, node_beta, filteredSearchList };
-        });
-
-        const results = await Promise.all(allPromises);
-
-        const combinedAlpha = results.flatMap(result => result.node_alpha);
-        const combinedBeta = results.flatMap(result => result.node_beta);
-        const combinedSearchList = results.flatMap(result => result.filteredSearchList);
-
-        setPreparedData({ alpha: combinedAlpha, beta: combinedBeta, searchList: combinedSearchList });
-        setTitle(`${company}の業界での立ち位置`);
+        setPreparedData({ traces: allTraces });
+        setTitle(`${selectedCompanies.join(', ')} の業界での立ち位置`);
       } catch (error) {
         console.error("データ準備中のエラー:", error);
       } finally {
@@ -127,46 +121,49 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
       }
     };
 
-    // 初期レンダリング時にもデータを準備
-    prepareData();
+    loadAll();
   }, [visualType, topic, company, span]);
 
-  // preparedData が揃ったら自動で描画
+  // 描画: preparedData が更新されたらPlotlyのデータ・アノテーションを生成
   useEffect(() => {
     if (!preparedData) return;
 
-    const plotData = preparedData.searchList.map((k, j) => {
-      const n = preparedData.alpha[j].length;
+    if (!preparedData.traces || preparedData.traces.length === 0) {
+      setFigData([]);
+      setAnnotations([...quadrantLabels]);
+      if (onRendered) onRendered();
+      return;
+    }
+
+    const plotData = preparedData.traces.map(({ topicId, companyName, alpha, beta }) => {
+      const n = alpha.length;
       return {
-        x: preparedData.alpha[j],
-        y: preparedData.beta[j],
-        mode: "lines+markers",
+        x: alpha,
+        y: beta,
+        mode: 'lines+markers',
+        type: 'scatter',
         marker: {
-          symbol: preparedData.alpha[j].map((_, i) => i === 0 ? 'square' : i === n - 1 ? 'star' : 'circle'),
-          color: colormap[IdtoTopic[topic[j % topic.length]]],
-          size: preparedData.alpha[j].map((_, i) => i === 0 || i === n - 1 ? 9 : 5),
+          symbol: alpha.map((_, i) => i === 0 ? 'square' : i === n - 1 ? 'star' : 'circle'),
+          color: colormap[IdtoTopic[topicId]] || 'gray',
+          size:   alpha.map((_, i) => (i === 0 || i === n - 1) ? 9 : 5),
         },
-        name: IdtoTopic[topic[j % topic.length]],
+        name: `${companyName} (${IdtoTopic[topicId] || topicId})`,
       };
     });
 
-    // 全時点間に矢印を描画
-    const plotAnnotations = preparedData.searchList.flatMap((k, j) =>
-      Array(preparedData.alpha[j].length - 1).fill(0).map((_, i) => ({
-        x: preparedData.alpha[j][i + 1],
-        y: preparedData.beta[j][i + 1],
-        xref: 'x', yref: 'y',
-        axref: 'x', ayref: 'y',
-        ax: preparedData.alpha[j][i],
-        ay: preparedData.beta[j][i],
-        arrowcolor: colormap[IdtoTopic[topic[j % topic.length]]],
+    // 全連続時点間に進行方向の矢印を描画
+    const plotAnnotations = preparedData.traces.flatMap(({ topicId, alpha, beta }) =>
+      Array.from({ length: alpha.length - 1 }, (_, i) => ({
+        x: alpha[i + 1], y: beta[i + 1],
+        ax: alpha[i],    ay: beta[i],
+        xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+        arrowcolor: colormap[IdtoTopic[topicId]] || 'gray',
         arrowsize: 1.2, arrowwidth: 1.2, arrowhead: 5,
         showarrow: true,
       }))
     );
 
     setFigData(plotData);
-    // 矢印アノテーション＋4象限ラベルを合わせて設定
     setAnnotations([...plotAnnotations, ...quadrantLabels]);
     if (onRendered) onRendered();
   }, [preparedData]);
