@@ -53,6 +53,11 @@ const App = () => {
     setSelectedSpan(value);
   };
 
+  const handleSelectAllCompanies = () => setSelectedCompanies([...companyList]);
+  const handleDeselectAllCompanies = () => setSelectedCompanies([]);
+  const handleSelectAllTopics = () => setSelectedTopics([...topicList]);
+  const handleDeselectAllTopics = () => setSelectedTopics([]);
+
   useEffect(() => {
     setSelectedCompanies(['株式会社熊谷組']);
     setSelectedTopics(['0']);
@@ -79,6 +84,10 @@ const App = () => {
             onChangeCompany={CompanyCheckboxChange}
             selectedSpan={selectedSpan}
             onSpanChange={handleSpanChange}
+            onSelectAllCompanies={handleSelectAllCompanies}
+            onDeselectAllCompanies={handleDeselectAllCompanies}
+            onSelectAllTopics={handleSelectAllTopics}
+            onDeselectAllTopics={handleDeselectAllTopics}
           />
         </Col>
 

@@ -2,7 +2,7 @@
 import React ,{ useState} from 'react';
 import { Accordion, Button, Col, Row } from 'react-bootstrap';
 
-const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyList, selectedCompanies, selectedTopics, onChangeTopic, onChangeCompany, selectedSpan, onSpanChange }) => {
+const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyList, selectedCompanies, selectedTopics, onChangeTopic, onChangeCompany, selectedSpan, onSpanChange, onSelectAllCompanies, onDeselectAllCompanies, onSelectAllTopics, onDeselectAllTopics }) => {
   const [inputType, setInputType] = useState(["radio","checkbox"]);
   const [companyFilter, setCompanyFilter] = useState("");
   const handleRadioChange = (event) => {
@@ -117,13 +117,34 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
           <Accordion.Item eventKey="1" className="white">
             <Accordion.Header>Topic</Accordion.Header>
             <Accordion.Body>
+              {/* one-compモード時に全選択/全解除を表示 */}
+              {visualType === "one-comp" && (
+                <div className="d-flex gap-2 mb-2">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary"
+                    style={{ fontSize: '12px', padding: '2px 8px' }}
+                    onClick={onSelectAllTopics}
+                  >
+                    全選択
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary"
+                    style={{ fontSize: '12px', padding: '2px 8px' }}
+                    onClick={onDeselectAllTopics}
+                  >
+                    全解除
+                  </button>
+                </div>
+              )}
               {topicList.map((topic) => (
                 <div key={topic}>
                   <input
                     type={inputType[0]} 
-                    id = {topic}
+                    id={topic}
                     checked={selectedTopics.includes(topic)}
-                    onChange={() => onChangeTopic(topic,inputType[0])}
+                    onChange={() => onChangeTopic(topic, inputType[0])}
                     name="topic"
                   />
                   <label htmlFor={topic}>{IdtoTopic[topic]}</label>
@@ -136,6 +157,27 @@ const Sidebar = ({ onApply, visualType, onVisualTypeChange, topicList, companyLi
           <Accordion.Item eventKey="2" className="white">
             <Accordion.Header>Company</Accordion.Header>
             <Accordion.Body>
+              {/* one-topicモード時に全選択/全解除を表示 */}
+              {visualType === "one-topic" && (
+                <div className="d-flex gap-2 mb-2">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary"
+                    style={{ fontSize: '12px', padding: '2px 8px' }}
+                    onClick={onSelectAllCompanies}
+                  >
+                    全選択
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary"
+                    style={{ fontSize: '12px', padding: '2px 8px' }}
+                    onClick={onDeselectAllCompanies}
+                  >
+                    全解除
+                  </button>
+                </div>
+              )}
               <input
                 type="text"
                 placeholder="企業名で絞り込み..."
