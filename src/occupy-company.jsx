@@ -45,14 +45,21 @@ const PlotPieB = ({ update, visualType, topic, company, span, topicList, onRende
     ? topicList.map(Number)
     : [2, 3, 1, 0, 9, 6, 8, 7, 11];
 
+  // spanによってoccupy_topicのファイル名が異なる
+  const getOccupyTopicFile = (spanId) => {
+    const map = { '1': 'occupy_topic_20.json', '2': 'occupy_topic_9.json', '3': 'occupy_topic_6.json' };
+    return map[String(spanId)] || 'occupy_topic_9.json';
+  };
+
   const loadData = async () => {
     try {
       const spanId = span || "2";
+      const occupyTopicFile = getOccupyTopicFile(spanId);
       const allTopicsData = await Promise.all(
         targetTopics.map(async (target_id) => {
           const cacheKey = `${target_id}-${spanId}-${company[0]}`;
           if (!dataCache.current[cacheKey]) {
-            const url = `${process.env.PUBLIC_URL}/data/app_data/topic${target_id}/persona=5/span${spanId}/occupy_topic_9.json`;
+            const url = `${process.env.PUBLIC_URL}/data/app_data/topic${target_id}/persona=5/span${spanId}/${occupyTopicFile}`;
             dataCache.current[cacheKey] = await fetchJson(url);
           }
 

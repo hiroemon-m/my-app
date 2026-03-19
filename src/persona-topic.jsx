@@ -68,7 +68,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, span, onRendered 
     if (visualType === "one-topic" && topic) {
       setIsLoading(true);
       const target_id = topic;
-      const columnPath = `${process.env.PUBLIC_URL}/data/param/patent/topic=${target_id}/company`;
+      const columnPath = `${process.env.PUBLIC_URL}/param/patent/topic=${target_id}/company`;
 
       loadCompanies(columnPath).then((data) => {
         setCompanyList(data);
@@ -100,7 +100,7 @@ const PlotPersonTopic = ({ update, visualType, topic, company, span, onRendered 
 
     const promises = Array.from({ length: 5 }, (_, i) => i + 5).map((p) => {
       const spanId = span || "2";
-      const parameterPath = `${process.env.PUBLIC_URL}/data/param/patent/topic=${target_id}/span=${spanId}/test_optimize_${p}`;
+      const parameterPath = `${process.env.PUBLIC_URL}/param/patent/topic=${target_id}/span=${spanId}/test_optimize_${p}`;
       return toList(parameterPath).then(({ alpha_li, beta_li }) => {
         searchList.forEach((k, j) => {
           const idx = companyList.indexOf(k);

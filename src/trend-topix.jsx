@@ -27,7 +27,9 @@ const PlotBarChartA = ({ update, visualType, topic, span, onRendered }) => {
       try {
         const targetId = topic[0];
         const spanId = span || "2";
-        const path = `${process.env.PUBLIC_URL}/data/app_data/topic${targetId}/persona=5/span${spanId}/occupy_topic_9.json`;
+        const occupyTopicMap = { '1': 'occupy_topic_20.json', '2': 'occupy_topic_9.json', '3': 'occupy_topic_6.json' };
+        const occupyTopicFile = occupyTopicMap[String(spanId)] || 'occupy_topic_9.json';
+        const path = `${process.env.PUBLIC_URL}/data/app_data/topic${targetId}/persona=5/span${spanId}/${occupyTopicFile}`;
         const fiPath = `${process.env.PUBLIC_URL}/data/fi_subclass_split.json`;
 
         const [occupyJson, fiList] = await Promise.all([

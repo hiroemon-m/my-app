@@ -71,7 +71,7 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
       try {
         const allPromises = (topic || ["default_topic"]).map(async (target_id) => {
             console.log("topic",target_id)
-          const columnPath = `${process.env.PUBLIC_URL}/data/param/patent/topic=${target_id}/company`;
+          const columnPath = `${process.env.PUBLIC_URL}/param/patent/topic=${target_id}/company`;
           const companies = await loadCompanies(columnPath);
 
           const companyDict = companies.reduce((acc, value, idx) => {
@@ -87,7 +87,7 @@ const colormap = {"コンクリート構造":'rgb(229, 134, 6)', "地盤改良":
 
           const promises = Array.from({ length: 5 }, (_, j) => j + 5).map(async (p) => {
             const spanId = span || "2";
-            const parameterPath = `${process.env.PUBLIC_URL}/data/param/patent/topic=${target_id}/span=${spanId}/test_optimize_${p}`;
+            const parameterPath = `${process.env.PUBLIC_URL}/param/patent/topic=${target_id}/span=${spanId}/test_optimize_${p}`;
             const { alpha_li, beta_li } = await toList(parameterPath);
 
             filteredSearchList.forEach((k, j) => {
