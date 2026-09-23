@@ -60,6 +60,8 @@ object-assign
 
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
+/*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
+
 /**
  * @license React
  * react-dom.production.min.js
